@@ -3,7 +3,11 @@ local Animation = require 'Animation'
 return Class{
     init = function(self, modelDefinition)
         self.states = modelDefinition.states
-        
+        -- assuming 'idle'/'south' as the default state for all models
+        self.state = 'idle'
+        self.subState = 'south'
+        self.current = self.states[self.state][self.subState]
+
         -- load sprite sheets and generate quads; append processed data to player model
         local spriteSheets, quads = {}, {}
         for k, sprites in pairs(modelDefinition.sprites) do
@@ -20,20 +24,25 @@ return Class{
             end
         end
     end,
+
     setState = function(self, state, subState)
-        self.state = state
-        self.subState = subState
-        self.current = self.states[state][subState]
-        self.current.animation:reset()
+        if self.state ~= state or self.subState ~= subState then
+            self.state = self.states[state] and state or self.state
+            self.subState = self.states[state][subState] and subState or self.subState
+            self.current = self.states[self.state][self.subState]
+            self.current.animation:reset()
+        end
     end,
+
     update = function(self, dt)
-        self.current.animation:update(dt)
+        return self.current.animation:update(dt)
     end,
+
     draw = function(self, x, y)
-        local sheet = self.current.spriteSheet
-        local quad = self.current.animation:draw()
-        quad = self.current.quads[quad]
+        local s = self.current
+        local sheet = s.spriteSheet
+        local quad = s.quads[s.animation:draw()]
         love.graphics.draw(sheet, quad, round(x), round(y),
-        0, 1, 1, 15, 16)
+        0, s.xScale, s.yScale, s.xOffset, s.yOffset)
     end
 }

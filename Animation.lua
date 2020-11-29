@@ -18,6 +18,8 @@ return Class {
         if self.timeout <= 0 then
             self.timeout = self.timeout + self.updateRate
             self.currentFrame = self.currentFrame % #self.frames + 1
+            -- return true if loop has been completed
+            return self.currentFrame == 1 and true or false
         end
     end,
     draw = function(self)
