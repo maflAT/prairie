@@ -1,20 +1,24 @@
 
 Class = require 'assets.hump.class'
 require 'utils'
+local Map = require 'Map'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
 Projectiles = {}
-local Player = require 'Player'
 
+local Player = require 'Player'
 local push = require 'assets.push.push'
-local player
+local player, map
 -- local keysPressed = {}
 
 function love.load()
+    math.randomseed(os.time())
+    love.graphics.setDefaultFilter('nearest', 'nearest')
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         resizable = true,
         pixelperfect = true,
     })
+    map = Map()
     player = Player(GAME_WIDTH / 2, GAME_HEIGHT / 2)
 end
 
@@ -27,12 +31,13 @@ end
 
 function love.draw()
     push:start()
-    love.graphics.clear()
-    love.graphics.print("test" .. GAME_WIDTH)
+    love.graphics.clear(0.9, 0.8, 0.3, 1)
+    map:draw()
     player:draw()
     for _, bullet in pairs(Projectiles) do
         bullet:draw()
     end
+    displayFPS()
     push:finish()
 end
 

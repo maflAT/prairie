@@ -3,7 +3,7 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
     require("lldebugger").start()
 end
 
--- define globals here to keep 'main.lua' cleaner
+-- define global constants here to keep 'main.lua' cleaner
 GAME_WIDTH = 320
 GAME_HEIGHT = 240
 WINDOW_WIDTH = 1280
