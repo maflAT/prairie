@@ -3,25 +3,18 @@ local playerSpeed = 150 -- in pixel / sec
 local playerWidth = 16
 local playerHeight = 24
 
-local spriteSheet = love.graphics.newImage('/assets/Graphics/Player/Player Front Sheet.png')
-local tileWidth = 48
-local tileHeight = 48
-local quads = generateQuads(spriteSheet, tileWidth, tileHeight)
-
-local tiles = {1, 2, 3, 4, 5, 6}
-
-local Animation = require 'Animation'
+local Model = require 'Model'
 
 return Class {__includes = Entity,
 
     init = function(self, x, y)
         Entity.init(self, x, y)
-        -- self.fireRate = fireRate
         self.cd = 0
         self.speed = playerSpeed
         self.width = playerWidth
         self.height = playerHeight
-        self.animation = Animation(tiles, 1 / 6)
+        self.model = Model(require('/models/player'))
+        self.model:setState('walking', 'east')
     end,
 
     update = function(self, dt)
@@ -30,7 +23,7 @@ return Class {__includes = Entity,
         local dirX, dirY = dir8('w', 's', 'a', 'd')
         self.x = coerce(self.x + dirX * ds, 0, GAME_WIDTH - self.width)
         self.y = coerce(self.y + dirY * ds, 0, GAME_HEIGHT - self.height)
-        self.animation:update(dt)
+        self.model:update(dt)
 
         -- fire logic
         self.cd = self.cd - dt
@@ -45,8 +38,6 @@ return Class {__includes = Entity,
     end,
 
     draw = function(self)
-        local quad = self.animation:draw()
-        love.graphics.draw(spriteSheet, quads[quad], round(self.x), round(self.y),
-            0, 1, 1, 15, 16)
+        self.model:draw(self.x, self.y)
     end
 }

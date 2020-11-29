@@ -42,7 +42,7 @@ function love.draw()
         bullet:draw()
     end
     displayFPS()
-    love.graphics.print(#Bullets, 4, 50)
+    love.graphics.print(#Bullets, 4, 30)
     push:finish()
 end
 
