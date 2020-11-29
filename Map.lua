@@ -1,7 +1,7 @@
 local atlas = love.graphics.newImage('assets/graphics/Atlas.png')
-local atlasWidth, atlasHeight = atlas:getDimensions()
 local tileWidth = 16
 local tileHeight = 16
+local quads = generateQuads(atlas, tileWidth, tileHeight)
 
 local tiles = {
     desert = {
@@ -20,19 +20,12 @@ local tiles = {
     }
 }
 
-local quads = {}
-for y = 0, atlasHeight - tileHeight, tileHeight do
-    for x = 0, atlasWidth - tileWidth, tileWidth do
-        table.insert(quads, #quads + 1, love.graphics.newQuad(
-            x, y, tileWidth, tileHeight, atlasWidth, atlasHeight))
-    end
-end
-
 local function fill(map, width, height)
+    local tileSet = tiles.desert.lowGround.plain
     for y = 0, height - 1 do
         map[y] = {}
         for x = 0, width - 1 do
-            map[y][x] = tiles.desert.lowGround.plain[math.random(#tiles.desert.lowGround.plain)]
+            map[y][x] = tileSet[math.random(#tileSet)]
         end
     end
 end

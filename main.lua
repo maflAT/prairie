@@ -1,11 +1,11 @@
 
-Class = require 'assets.hump.class'
 require 'utils'
-local Map = require 'Map'
+Class = require 'assets.hump.class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
-Projectiles = {}
+Bullets = {}
 
+local Map = require 'Map'
 local Player = require 'Player'
 local push = require 'assets.push.push'
 local player, map
@@ -24,9 +24,13 @@ end
 
 function love.update(dt)
     player:update(dt)
-    for _, bullet in pairs(Projectiles) do
+    local delete = {}
+    for i, bullet in pairs(Bullets) do
         bullet:update(dt)
+        if bullet.delete then table.insert(delete, #delete + 1, i) end
     end
+    for _, bullet in pairs(delete) do Bullets[bullet] = nil end
+
 end
 
 function love.draw()
@@ -34,10 +38,11 @@ function love.draw()
     love.graphics.clear(0.9, 0.8, 0.3, 1)
     map:draw()
     player:draw()
-    for _, bullet in pairs(Projectiles) do
+    for _, bullet in pairs(Bullets) do
         bullet:draw()
     end
     displayFPS()
+    love.graphics.print(#Bullets, 4, 50)
     push:finish()
 end
 
