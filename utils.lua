@@ -15,6 +15,7 @@ function dir8(upKey, downKey, leftKey, rightKey)
     return x, y, h
 end
 
+-- simple fps counter
 function displayFPS()
     local r, g, b, a = love.graphics.getColor()
     love.graphics.setColor(0, 1, 0, 0.6)
@@ -40,4 +41,5 @@ end
 -- limit value to lower and upper bounds
 function coerce(n, min, max) return math.max(min, math.min(n, max)) end
 
+-- round to nearest integer
 function round(n) return math.floor(n + 0.5) end

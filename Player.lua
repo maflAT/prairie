@@ -23,6 +23,9 @@ return Class {__includes = Entity,
         local dirX, dirY, heading = dir8('w', 's', 'a', 'd')
         self.x = coerce(self.x + dirX * ds, 0, GAME_WIDTH - self.width)
         self.y = coerce(self.y + dirY * ds, 0, GAME_HEIGHT - self.height)
+        if not self.model.state == 'shooting' then
+            self.model:setState('walking', heading)
+        end
         
         -- fire logic
         self.cd = self.cd - dt
@@ -36,7 +39,11 @@ return Class {__includes = Entity,
             end
         end
         if self.model:update(dt) and aim == '' then
-            self.model:setState('idle', heading)
+            if heading ~= '' then
+                self.model:setState('walking', heading)
+            else
+                self.model:setState('idle', heading)
+            end
         end
     end,
 

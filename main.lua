@@ -1,4 +1,6 @@
-
+--[[ 
+    TODO: enemies, obstacles, collision detection, hit detection
+ ]]
 require 'utils'
 Class = require 'assets.hump.class'
 Entity = require 'Entity'
