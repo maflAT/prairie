@@ -45,6 +45,8 @@ function love.draw()
     end
     displayFPS()
     love.graphics.print(#Bullets, 4, 30)
+    love.graphics.print(player.model.state, 4, 50)
+    love.graphics.print(player.model.current.animation.currentFrame, 4, 70)
     push:finish()
 end
 

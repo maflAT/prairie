@@ -1,5 +1,5 @@
-local fireRate = 0.2    -- in rounds / sec
-local playerSpeed = 150 -- in pixel / sec
+local fireRate = 0.3    -- in seconds
+local playerSpeed = 120 -- in pixel / sec
 local playerWidth = 16
 local playerHeight = 24
 
@@ -18,31 +18,27 @@ return Class {__includes = Entity,
     end,
 
     update = function(self, dt)
+        local animationComplete = self.model:update(dt)
+
         -- movement logic
         local ds = self.speed * dt
-        local dirX, dirY, heading = dir8('w', 's', 'a', 'd')
-        self.x = coerce(self.x + dirX * ds, 0, GAME_WIDTH - self.width)
-        self.y = coerce(self.y + dirY * ds, 0, GAME_HEIGHT - self.height)
-        if not self.model.state == 'shooting' then
-            self.model:setState('walking', heading)
-        end
+        local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
+        self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
+        self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
         
         -- fire logic
         self.cd = self.cd - dt
-        local hAim, vAim, aim = dir8('up', 'down', 'left', 'right')
-        if self.cd <= 0 then
-            if hAim ~= 0 or vAim ~= 0 then
+        local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
+        if self.cd <= 0 and #aimDirection > 0 then
                 self.cd = fireRate
                 local bullet = Projectile(self.x, self.y, hAim, vAim)
                 table.insert(Bullets, #Bullets + 1, bullet)
-                self.model:setState('shooting', aim)
-            end
-        end
-        if self.model:update(dt) and aim == '' then
-            if heading ~= '' then
-                self.model:setState('walking', heading)
+                self.model:setState('shooting', aimDirection)
+        elseif self.model.state ~= 'shooting' or animationComplete then
+            if #movDirection > 0 then
+                self.model:setState('walking', movDirection)
             else
-                self.model:setState('idle', heading)
+                self.model:setState('idle', self.model.subState)
             end
         end
     end,

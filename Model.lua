@@ -29,6 +29,8 @@ return Class{
                 attributes.animation = Animation(attributes.frames, attributes.updateRate)
             end
         end
+
+        self:setState(self.state, self.subState)
     end,
 
     setState = function(self, state, subState)

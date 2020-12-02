@@ -49,7 +49,7 @@ local playerModel = {
         default = {
             sprites = 1,
             frames = {},
-            updateRate = 1 / 6,
+            updateRate = 1 / 15,
             tileWidth = 48,
             tileHeight = 44,
             xScale = 1,
@@ -98,7 +98,7 @@ local playerModel = {
         walking = {
             default = {
                 frames = {15, 16, 17, 18, 19, 20, 21, 22},
-                updateRate = 1 / 6,
+                updateRate = 1 / 10,
                 xOffset = 15,
                 yOffset = 16,
             },
