@@ -3,8 +3,6 @@ local playerSpeed = 120 -- in pixel / sec
 local playerWidth = 16
 local playerHeight = 24
 
-local Model = require 'Model'
-
 return Class {__includes = Entity,
 
     init = function(self, x, y)
@@ -13,8 +11,7 @@ return Class {__includes = Entity,
         self.speed = playerSpeed
         self.width = playerWidth
         self.height = playerHeight
-        self.model = Model(require('/models/player'))
-        -- self.model:setState('walking', 'east')
+        self.model = require 'Model' (require '/models/player')
     end,
 
     update = function(self, dt)

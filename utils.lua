@@ -15,14 +15,6 @@ function dir8(upKey, downKey, leftKey, rightKey)
     return x, y, h
 end
 
--- simple fps counter
-function displayFPS()
-    local r, g, b, a = love.graphics.getColor()
-    love.graphics.setColor(0, 1, 0, 0.6)
-    love.graphics.print(tostring(love.timer.getFPS()), 4, 4)
-    love.graphics.setColor(r, g, b, a)
-end
-
 -- generate quads from atlas
 function generateQuads(atlas, tileWidth, tileHeight)
     local atlasWidth, atlasHeight = atlas:getDimensions()
@@ -43,3 +35,28 @@ function coerce(n, min, max) return math.max(min, math.min(n, max)) end
 
 -- round to nearest integer
 function round(n) return math.floor(n + 0.5) end
+
+-- display various debug information
+debugText = Class {
+    init = function(self)
+        self.enabled = false
+    end,
+    toggle = function(self)
+        self.enabled = not self.enabled
+    end,
+    draw = function(self, map, player)
+        if self.enabled then
+            self:displayFPS()
+            love.graphics.print('Projectiles: ' .. #Bullets, 4, 25)
+            love.graphics.print('State: ' .. player.model.state, 4, 40)
+            love.graphics.print('Frame: ' .. player.model.current.animation.currentFrame, 4, 55)
+        end
+    end,
+    -- simple fps counter
+    displayFPS = function(self)
+        local r, g, b, a = love.graphics.getColor()
+        love.graphics.setColor(0, 1, 0, 0.6)
+        love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 4, 4)
+        love.graphics.setColor(r, g, b, a)
+    end
+} ()

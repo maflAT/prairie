@@ -1,16 +1,16 @@
 --[[ 
     TODO: enemies, obstacles, collision detection, hit detection
- ]]
-require 'utils'
+]]
+
 Class = require 'assets.hump.class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
 Bullets = {}
+require 'utils'
 
-local Map = require 'Map'
-local Player = require 'Player'
 local push = require 'assets.push.push'
-local player, map
+local map = require 'Map' ()
+local player = require 'Player' (GAME_WIDTH / 2, GAME_HEIGHT / 2)
 -- local keysPressed = {}
 
 function love.load()
@@ -18,10 +18,8 @@ function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         resizable = true,
-        pixelperfect = true,
+        pixelperfect = false,
     })
-    map = Map()
-    player = Player(GAME_WIDTH / 2, GAME_HEIGHT / 2)
 end
 
 function love.update(dt)
@@ -43,16 +41,13 @@ function love.draw()
     for _, bullet in pairs(Bullets) do
         bullet:draw()
     end
-    displayFPS()
-    love.graphics.print(#Bullets, 4, 30)
-    love.graphics.print(player.model.state, 4, 50)
-    love.graphics.print(player.model.current.animation.currentFrame, 4, 70)
+    debugText:draw(map, player)
     push:finish()
 end
 
 function love.keypressed(k)
-    if k == 'escape' then
-        love.event.quit()
+    if k == 'escape' then love.event.quit()
+    elseif k == '^' then debugText:toggle()
     -- else
     --     table.insert(keysPressed, #keysPressed + 1, k)
     end
