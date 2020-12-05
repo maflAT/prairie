@@ -1,60 +1,85 @@
+-- This class serves as a collection for all animations of the player.
+-- It initializes and manages all combinations of behaviours and orientations.
+
 local Animation = require 'Animation'
 
 return Class{
+    doing = '',                 -- current behaviour as string
+    facing = '',                -- current orientation as string
+    behaviour = {},             -- current behaviour as object
+    orientation = {},           -- current orientation as object
+    animation = {},             -- current animation (short hand)
+    animationComplete = false,
+
     init = function(self, model)
-        self.states = model.states
-        -- assuming 'idle'/'south' as the default state for all models
-        self.state = 'idle'
-        self.subState = 'south'
-        self.current = self.states[self.state][self.subState]
+        self.behaviours = model.behaviours
+        self.orientations = model.orientations
 
-        -- load sprite sheets and generate quads; append processed data to player model
+        -- load sprite sheets and generate quads for all sprites listed in the player model
         local spriteSheets, quads = {}, {}
-        for k, sprites in pairs(model.sprites) do
-            spriteSheets[k] = love.graphics.newImage(sprites.file)
-            quads[k] = generateQuads(spriteSheets[k], sprites.tileWidth, sprites.tileHeight)
+        for sheetNum, sheet in pairs(model.sprites) do
+            spriteSheets[sheetNum] = love.graphics.newImage(sheet.file)
+            local tileWidth = sheet.tileWidth or model.defaults.sprites.tileWidth
+            local tileHeight = sheet.tileHeight or model.defaults.sprites.tileHeight
+            quads[sheetNum] = generateQuads(spriteSheets[sheetNum], tileWidth, tileHeight)
         end
 
-        -- initialize attributes for each state in player model
-        for state, subStates in pairs(self.states) do
-            for subState, attributes in pairs(subStates) do
-                for attribute, defaultVal in pairs(model.attributes.default) do
-                    attributes[attribute] = 
-                        model.attributes[state][subState][attribute]
-                        or model.attributes[state]['default'][attribute]
-                        or defaultVal
-                end
-                attributes.spriteSheet = spriteSheets[attributes.sprites]
-                attributes.quads = quads[attributes.sprites]
-                attributes.animation = Animation(attributes.frames, attributes.updateRate)
+        -- complete attributes for each orientation
+        for _, attributes in pairs(self.orientations) do
+            -- fill in defaults for missing attributes
+            for attribute, defaultValue in pairs(model.defaults.orientations) do
+                attributes[attribute] = attributes[attribute] or defaultValue
             end
+            -- append imported sprite sheets and generated quads to attributes
+            attributes.spriteSheet = spriteSheets[attributes.sprites]
+            attributes.quads = quads[attributes.sprites]
         end
 
-        self:setState(self.state, self.subState)
+        -- complete attributes for each behaviour
+        for _, attributes in pairs(self.behaviours) do
+            -- fill in defaults for missing attributes
+            for attribute, defaultValue in pairs(model.defaults.behaviours) do
+                attributes[attribute] = attributes[attribute] or defaultValue
+            end
+            -- initialize animation sequence for each behaviour
+            attributes.animation = Animation(attributes.frames, attributes.updateRate)
+        end
+
+        -- initialize to default state
+        self:doo('idle')
+        self:face('south')
     end,
 
-    setState = function(self, state, subState)
+    doo = function(self, behaviour)
         -- if desired state is defined, set it and start its animation,
         -- else keep current state
-        if self.state ~= state or self.subState ~= subState then
-            self.state = self.states[state] and state or self.state
-            self.subState = self.states[state][subState] and subState or self.subState
-            self.current = self.states[self.state][self.subState]
-            self.current.animation:reset()
+        if behaviour ~= nil and behaviour ~= self.doing and self.behaviours[behaviour] then
+            self.doing = behaviour
+            self.behaviour = self.behaviours[behaviour]
+            self.animation = self.behaviour.animation
+            self.animation:reset()
         end
-        return state, subState
+    end,
+
+    face = function(self, direction)
+        if direction ~= nil and direction ~= self.facing and self.orientations[direction] then
+            self.facing = direction
+            self.orientation = self.orientations[direction]
+            self.animation:reset()
+        end
     end,
 
     update = function(self, dt)
         -- return true if current loop has been completed
-        return self.current.animation:update(dt)
+        self.animationComplete = self.animation:update(dt)
+        return self.animationComplete
     end,
 
     draw = function(self, x, y)
-        local s = self.current
-        local sheet = s.spriteSheet
-        local quad = s.quads[s.animation:draw()]
+        local b, o = self.behaviour, self.orientation
+        local sheet = o.spriteSheet
+        local quad = o.quads[b.animation:draw()]
         love.graphics.draw(sheet, quad, round(x), round(y),
-        0, s.xScale, s.yScale, s.xOffset, s.yOffset)
+        0, o.xScale, o.yScale, o.xOffset, o.yOffset)
     end
 }

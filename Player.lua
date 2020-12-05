@@ -15,7 +15,7 @@ return Class {__includes = Entity,
     end,
 
     update = function(self, dt)
-        local animationComplete = self.model:update(dt)
+        local animationComplete = self.model.animationComplete
 
         -- movement logic
         local ds = self.speed * dt
@@ -30,14 +30,17 @@ return Class {__includes = Entity,
                 self.cd = fireRate
                 local bullet = Projectile(self.x, self.y, hAim, vAim)
                 table.insert(Bullets, #Bullets + 1, bullet)
-                self.model:setState('shooting', aimDirection)
-        elseif self.model.state ~= 'shooting' or animationComplete then
+                self.model:doo('shooting')
+                self.model:face(aimDirection)
+        elseif self.model.doing ~= 'shooting' or animationComplete then
             if #movDirection > 0 then
-                self.model:setState('walking', movDirection)
+                self.model:doo('walking')
+                self.model:face(movDirection)
             else
-                self.model:setState('idle', self.model.subState)
+                self.model:doo('idle')
             end
         end
+        self.model:update(dt)
     end,
 
     draw = function(self)

@@ -48,8 +48,8 @@ debugText = Class {
         if self.enabled then
             self:displayFPS()
             love.graphics.print('Projectiles: ' .. #Bullets, 4, 25)
-            love.graphics.print('State: ' .. player.model.state, 4, 40)
-            love.graphics.print('Frame: ' .. player.model.current.animation.currentFrame, 4, 55)
+            love.graphics.print('Behaviour: ' .. player.model.doing, 4, 40)
+            love.graphics.print('Frame: ' .. player.model.animation.currentFrame, 4, 55)
         end
     end,
     -- simple fps counter
