@@ -1,18 +1,18 @@
 -- local fireRate = 0.3    -- in seconds
--- local Speed = 120 -- in pixel / sec
--- local modelWidth = 16
--- local modelHeight = 24
+-- local playerSpeed = 100 -- in pixel / sec
+-- local playerWidth = 20
+-- local playerHeight = 32
 
 return Class {__includes = Entity,
 
     init = function(self, modelDefinition, x, y)
         Entity.init(self, x, y)
-        self.cd = 0
         self.attackRate = modelDefinition.stats.attackRate
         self.speed = modelDefinition.stats.speed
         self.width = modelDefinition.stats.modelWidth
         self.height = modelDefinition.stats.modelHeight
         self.model = AnimationModel(modelDefinition)
+        self.cd = 0
     end,
 
     update = function(self, dt)

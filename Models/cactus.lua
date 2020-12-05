@@ -3,8 +3,8 @@
 local defaults = {
     sprites = {
         file = "",
-        tileWidth = 48,
-        tileHeight = 44,
+        tileWidth = 40,
+        tileHeight = 40,
     },
     behaviours = {
         frames = {},
@@ -14,40 +14,38 @@ local defaults = {
         sprites = 1,
         xScale = 1,
         yScale = 1,
-        xOffset = 15,
-        yOffset = 16,
+        xOffset = 12,
+        yOffset = 17,
     },
 }
 
 local stats = {
-    attackRate = 0.3,   -- in seconds
-    speed = 120,        -- in pixel / sec
+    attackRate = 1,     -- in seconds
+    speed = 80,         -- in pixel / sec
     modelWidth = 16,
-    modelHeight = 24,
+    modelHeight = 22,
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Player/Player Front Sheet.png",
+    [1] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Front Sheet.png",
         --    tileWidth = 48,
         --    tileHeight = 44
         },
-    [2] = {file = "/assets/Graphics/Player/Player Back Sheet.png"},
-    [3] = {file = "/assets/Graphics/Player/Player Side Sheet.png"},
-    [4] = {file = "/assets/Graphics/Player/Player Angle 1 Sheet.png"},
-    [5] = {file = "/assets/Graphics/Player/Player Angle 2 Sheet.png"},
+    [2] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Back Sheet.png"},
+    [3] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Side Sheet.png"},
 }
 
 local behaviours = {
     idle = {
-        frames = {1, 2, 3, 4, 5, 6},
+        frames = {1, 2, 3, 4},
         updateRate = 1 / 6,
     },
     walking = {
-        frames = {15, 16, 17, 18, 19, 20, 21, 22},
+        frames = {12, 13, 14, 15, 16, 17, 18, 19, 20},
         updateRate = 1 / 10,
     },
     attacking = {
-        frames = {29, 30, 31, 32, 33, 34},
+        frames = {23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33},
         updateRate = 1 / 30,
     },
 }
@@ -65,23 +63,7 @@ local orientations = {
     west = {
         sprites = 3,
         xScale = -1,
-        xOffset = 31,
-    },
-    southeast = {
-        sprites = 4,
-    },
-    southwest = {
-        sprites = 4,
-        xScale = -1,
-        xOffset = 31,
-    },
-    northeast = {
-        sprites = 5,
-    },
-    northwest = {
-        sprites = 5,
-        xScale = -1,
-        xOffset = 31,
+        xOffset = 28,
     },
 }
 

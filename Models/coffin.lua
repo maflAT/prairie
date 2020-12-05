@@ -3,8 +3,8 @@
 local defaults = {
     sprites = {
         file = "",
-        tileWidth = 48,
-        tileHeight = 44,
+        tileWidth = 74,
+        tileHeight = 70,
     },
     behaviours = {
         frames = {},
@@ -14,27 +14,25 @@ local defaults = {
         sprites = 1,
         xScale = 1,
         yScale = 1,
-        xOffset = 15,
-        yOffset = 16,
+        xOffset = 18,
+        yOffset = 20,
     },
 }
 
 local stats = {
-    attackRate = 0.3,   -- in seconds
-    speed = 120,        -- in pixel / sec
-    modelWidth = 16,
-    modelHeight = 24,
+    attackRate = 1,     -- in seconds
+    speed = 80,         -- in pixel / sec
+    modelWidth = 20,
+    modelHeight = 32,
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Player/Player Front Sheet.png",
+    [1] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Front Sheet.png",
         --    tileWidth = 48,
         --    tileHeight = 44
         },
-    [2] = {file = "/assets/Graphics/Player/Player Back Sheet.png"},
-    [3] = {file = "/assets/Graphics/Player/Player Side Sheet.png"},
-    [4] = {file = "/assets/Graphics/Player/Player Angle 1 Sheet.png"},
-    [5] = {file = "/assets/Graphics/Player/Player Angle 2 Sheet.png"},
+    [2] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Back Sheet.png"},
+    [3] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Side Sheet.png"},
 }
 
 local behaviours = {
@@ -43,11 +41,11 @@ local behaviours = {
         updateRate = 1 / 6,
     },
     walking = {
-        frames = {15, 16, 17, 18, 19, 20, 21, 22},
+        frames = {19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32},
         updateRate = 1 / 10,
     },
     attacking = {
-        frames = {29, 30, 31, 32, 33, 34},
+        frames = {37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54},
         updateRate = 1 / 30,
     },
 }
@@ -65,23 +63,7 @@ local orientations = {
     west = {
         sprites = 3,
         xScale = -1,
-        xOffset = 31,
-    },
-    southeast = {
-        sprites = 4,
-    },
-    southwest = {
-        sprites = 4,
-        xScale = -1,
-        xOffset = 31,
-    },
-    northeast = {
-        sprites = 5,
-    },
-    northwest = {
-        sprites = 5,
-        xScale = -1,
-        xOffset = 31,
+        xOffset = 37,
     },
 }
 

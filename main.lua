@@ -5,12 +5,23 @@
 Class = require 'assets.hump.class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
+AnimationModel = require 'Model'
+ModelDefinitions = {
+    Player = require '/models/player',
+    Cactus = require '/models/cactus',
+    Coffin = require '/models/coffin',
+    Coyote = require '/models/coyote',
+}
 Bullets = {}
+Mobs = {}
 require 'utils'
 
 local push = require 'assets.push.push'
 local map = require 'Map' ()
-local player = require 'Player' (GAME_WIDTH / 2, GAME_HEIGHT / 2)
+local player = require 'Player' (ModelDefinitions.Player, GAME_WIDTH / 2, GAME_HEIGHT / 2)
+local coffin = require 'Enemy' (ModelDefinitions.Coffin, 50, 50)
+local cactus = require 'Enemy' (ModelDefinitions.Cactus, GAME_WIDTH - 50, GAME_HEIGHT - 50)
+local coyote = require 'Enemy' (ModelDefinitions.Coyote, 50, GAME_HEIGHT - 50)
 -- local keysPressed = {}
 
 function love.load()
@@ -24,6 +35,9 @@ end
 
 function love.update(dt)
     player:update(dt)
+    coffin:update(dt)
+    cactus:update(dt)
+    coyote:update(dt)
     local delete = {}
     for i, bullet in pairs(Bullets) do
         bullet:update(dt)
@@ -38,6 +52,9 @@ function love.draw()
     love.graphics.clear(0.9, 0.8, 0.3, 1)
     map:draw()
     player:draw()
+    coffin:draw()
+    cactus:draw()
+    coyote:draw()
     for _, bullet in pairs(Bullets) do
         bullet:draw()
     end
