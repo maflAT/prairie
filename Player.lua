@@ -13,20 +13,21 @@ end
 
 function Player:update(dt)
     local animationComplete = self.model.animationComplete
-
+    
     -- get user input
     local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
     local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
-
+    
     -- update position
     local ds = self.speed * dt
     self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
     self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
+    Entity.update(self)
 
-    -- hit detection
+    -- hit detection against Enemies
     if self.invincible <= 0 then
         for _, mob in pairs(Mobs) do
-            if overlaps(self:getBB(), mob:getBB()) then
+            if overlaps(self.boundingBox, mob.boundingBox) then
                 self.life = self.life - 1
                 self.invincible = 2
             end

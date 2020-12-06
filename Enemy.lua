@@ -19,6 +19,7 @@ function Enemy:update(dt)
     local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
     self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
     self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
+    Entity.update(self)
 
     -- fire logic
     self.cd = self.cd - dt
