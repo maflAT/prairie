@@ -36,27 +36,43 @@ function coerce(n, min, max) return math.max(min, math.min(n, max)) end
 -- round to nearest integer
 function round(n) return math.floor(n + 0.5) end
 
+-- simple collision detection using left, right, top, bottom edges
+function overlaps(a, b)
+    if (a.ri < b.le) or (b.ri < a.le) or (a.bot < b.top) or (b.bot < a.top) then
+        return false    -- no overlap on any axis
+    else
+        return true
+    end
+end
+
+-- remove all entities from list, that are marked for deletion
+function cleanUp(...)
+    for i = 1, select('#', ...) do
+        local killList = {}
+        for k, entity in pairs(select(i, ...)) do
+            if entity.delete then table.insert(killList, k) end
+        end
+        for _, entity in pairs(killList) do select(i, ...)[entity] = nil end
+    end
+end
+
 -- display various debug information
 debugText = Class {
     init = function(self)
-        self.enabled = false
+        self.enabled = true
     end,
     toggle = function(self)
         self.enabled = not self.enabled
     end,
     draw = function(self, map, player)
         if self.enabled then
-            self:displayFPS()
-            love.graphics.print('Projectiles: ' .. #Bullets, 4, 25)
-            love.graphics.print('Behaviour: ' .. player.model.doing, 4, 40)
-            love.graphics.print('Frame: ' .. player.model.animation.currentFrame, 4, 55)
+            local r, g, b, a = love.graphics.getColor()
+            love.graphics.setColor(0, 0.8, 0, 0.7)
+            love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 0, 0)
+            love.graphics.print('Projectiles: ' .. #Bullets, 0, 8)
+            love.graphics.print('Behaviour: ' .. player.model.doing, 0, 16)
+            love.graphics.print('Frame: ' .. player.model.animation.currentFrame, 0, 24)
+            love.graphics.setColor(r, g, b, a)
         end
     end,
-    -- simple fps counter
-    displayFPS = function(self)
-        local r, g, b, a = love.graphics.getColor()
-        love.graphics.setColor(0, 1, 0, 0.6)
-        love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 4, 4)
-        love.graphics.setColor(r, g, b, a)
-    end
 } ()

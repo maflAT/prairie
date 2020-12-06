@@ -1,7 +1,5 @@
-assets/*
-!assets/graphics/
 assets/graphics/*
 !assets/graphics/atlas.png
 !assets/graphics/Player/
-assets/graphics/Player/*
-!assets/graphics/Player/Player Front Sheet.png
+assets/graphics/Player/Unused Walk and Shoot.png
+!assets/graphics/Mobs/

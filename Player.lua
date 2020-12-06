@@ -1,50 +1,42 @@
--- local fireRate = 0.3    -- in seconds
--- local Speed = 120 -- in pixel / sec
--- local modelWidth = 16
--- local modelHeight = 24
 
-return Class {__includes = Entity,
+local Player = Class {__includes = Entity}
 
-    init = function(self, modelDefinition, x, y)
-        Entity.init(self, x, y)
-        self.cd = 0
-        self.attackRate = modelDefinition.stats.attackRate
-        self.speed = modelDefinition.stats.speed
-        self.width = modelDefinition.stats.modelWidth
-        self.height = modelDefinition.stats.modelHeight
-        self.model = AnimationModel(modelDefinition)
-    end,
+function Player:init(model, x, y)
+    Entity.init(self, x, y, model.stats.modelWidth, model.stats.modelHeight)
+    self.attackRate = model.stats.attackRate
+    self.speed = model.stats.speed
+    self.model = AnimationModel(model)
+    self.cd = 0
+end
 
-    update = function(self, dt)
-        local animationComplete = self.model.animationComplete
+function Player:update(dt)
+    local animationComplete = self.model.animationComplete
 
-        -- movement logic
-        local ds = self.speed * dt
-        local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
-        self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
-        self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
-        
-        -- fire logic
-        self.cd = self.cd - dt
-        local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
-        if self.cd <= 0 and #aimDirection > 0 then
-                self.cd = self.attackRate
-                local bullet = Projectile(self.x, self.y, hAim, vAim)
-                table.insert(Bullets, #Bullets + 1, bullet)
-                self.model:doo('attacking')
-                self.model:face(aimDirection)
-        elseif self.model.doing ~= 'attacking' or animationComplete then
-            if #movDirection > 0 then
-                self.model:doo('walking')
-                self.model:face(movDirection)
-            else
-                self.model:doo('idle')
-            end
+    -- movement logic
+    local ds = self.speed * dt
+    local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
+    self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
+    self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
+
+    -- fire logic
+    self.cd = self.cd - dt
+    local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
+    if self.cd <= 0 and #aimDirection > 0 then
+            self.cd = self.attackRate
+            Projectile(self.x, self.y, hAim, vAim)
+            self.model:doo('attacking')
+            self.model:face(aimDirection)
+    elseif self.model.doing ~= 'attacking' or animationComplete then
+        if #movDirection > 0 then
+            self.model:doo('walking')
+            self.model:face(movDirection)
+        else
+            self.model:doo('idle')
         end
-        self.model:update(dt)
-    end,
-
-    draw = function(self)
-        self.model:draw(self.x, self.y)
     end
-}
+    self.model:update(dt)
+end
+
+function Player:draw() self.model:draw(self.x, self.y) end
+
+return Player
