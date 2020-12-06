@@ -64,10 +64,43 @@ local orientations = {
     },
 }
 
+local function attackPattern(self, dt)
+    -- move towards player
+    local dx = self.player.x - self.x
+    local dy = self.player.y - self.y
+    local dx2 = dx ^ 2
+    local dy2 = dy ^ 2
+    local hyp = dx2 + dy2
+    if hyp > 100 then
+        local hMov, vMov = 0, 0
+        if dx2 < dy2 then
+            vMov = self.speed * dt * (dy < 0 and -1 or 1)
+        else
+            hMov = self.speed * dt * (dx < 0 and -1 or 1)
+        end
+        self.x = coerce(self.x + hMov, 0, GAME_WIDTH - self.width)
+        self.y = coerce(self.y + vMov, 0, GAME_HEIGHT - self.height)
+    end
+
+    -- determine correct orientation
+    local behaviour, orientation
+    if dx2 < dy2 then
+        orientation = dy < 0 and 'north' or 'south'
+    else
+        orientation = dx < 0 and 'west' or 'east'
+    end
+
+    -- play attack animation if within certain range
+    if hyp < 5000 then behaviour = 'attacking' else behaviour = 'walking' end
+
+    return behaviour, orientation
+end
+
 return {
     defaults = defaults,
     stats = stats,
     sprites = sprites,
     behaviours = behaviours,
     orientations= orientations,
+    attackPattern = attackPattern,
 }
