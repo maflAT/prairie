@@ -1,6 +1,6 @@
 Mobs = {}
 
-local Enemy = Class {__includes = Entity}
+local Enemy = Class {__includes = Entity, map = {}, player = {}}
 
 function Enemy:init(model, x, y)
     Entity.init(self, x, y, model.stats.modelWidth, model.stats.modelHeight)
@@ -12,30 +12,36 @@ function Enemy:init(model, x, y)
 end
 
 function Enemy:update(dt)
-    local animationComplete = self.model.animationComplete
 
-    -- movement logic
-    local ds = self.speed * dt
-    local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
-    self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
-    self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
-    Entity.update(self)
-
-    -- fire logic
-    self.cd = self.cd - dt
-    local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
-    if self.cd <= 0 and #aimDirection > 0 then
-            self.cd = self.attackRate
-            self.model:doo('attacking')
-            self.model:face(aimDirection)
-    elseif self.model.doing ~= 'attacking' or animationComplete then
-        if #movDirection > 0 then
-            self.model:doo('walking')
-            self.model:face(movDirection)
-        else
-            self.model:doo('idle')
-        end
+    -- move towards player
+    local dx = self.player.x - self.x
+    local dy = self.player.y - self.y
+    local dx2 = dx ^ 2
+    local dy2 = dy ^ 2
+    local hyp = dx2 + dy2
+    if hyp > 100 then
+        local ds = self.speed * dt / hyp
+        local hMov = dx2 * ds * (dx < 0 and -1 or 1)
+        local vMov = dy2 * ds * (dy < 0 and -1 or 1)
+        self.x = coerce(self.x + hMov, 0, GAME_WIDTH - self.width)
+        self.y = coerce(self.y + vMov, 0, GAME_HEIGHT - self.height)
     end
+
+    -- determine correct orientation
+    if dx2 < dy2 then
+        self.model:face(dy < 0 and 'north' or 'south')
+    else
+        self.model:face(dx < 0 and 'west' or 'east')
+    end
+
+    -- play attack animation if within certain range
+    if hyp < 5000 then
+        self.model:doo('attacking')
+    else
+        self.model:doo('walking')
+    end
+
+    Entity.update(self)
     self.model:update(dt)
 end
 

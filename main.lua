@@ -2,35 +2,41 @@
     TODO: enemy behaviours, game state, hit and death animations, obstacles,
 ]]
 
--- load classes / modules
+-- load global classes / modules; register locals
 Class = require 'assets/hump/class'
-require 'utils'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
 AnimationModel = require 'Model'
-local Enemy = require 'Enemy'
-local push = require 'assets/push/push'
-local map = require 'Map' ()
-local charData = {
-    Player = require '/models/player',
-    Cactus = require '/models/cactus',
-    Coffin = require '/models/coffin',
-    Coyote = require '/models/coyote',
-}
--- spawn player
-local player = require 'Player' (charData.Player, GAME_WIDTH / 2, GAME_HEIGHT / 2)
+require 'utils'
+local push, map, charData, player = {}, {}, {}, {}
 
 function love.load()
     math.randomseed(os.time())
+
+    -- load classes / modules / assets
     -- outlineFont = love.graphics.newFont('/assets/fonts/Fipps.otf', 8)
     smallFont = love.graphics.newFont('/assets/fonts/goodbyeDespair.ttf', 8)
     tinyFont = love.graphics.newFont('/assets/fonts/04B_03B_.ttf', 8)
     love.graphics.setFont(smallFont)
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    push = require 'assets/push/push'
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         resizable = true,
         pixelperfect = false,
     })
+
+    charData = {
+        Player = require '/models/player',
+        Cactus = require '/models/cactus',
+        Coffin = require '/models/coffin',
+        Coyote = require '/models/coyote',
+    }
+    map = require 'Map' ()
+    player = require 'Player' (charData.Player, GAME_WIDTH / 2, GAME_HEIGHT / 2)
+    local Enemy = require 'Enemy'
+    Enemy.map = map
+    Enemy.player = player
+    
     -- spawn some enemies
     Enemy(charData.Coffin, 50, 50)
     Enemy(charData.Cactus, GAME_WIDTH - 50, GAME_HEIGHT - 50)

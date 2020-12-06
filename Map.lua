@@ -28,7 +28,7 @@ local function fill(tileGrid, width, height)
     for y = 0, height - 1 do
         tileGrid[y] = {}
         for x = 0, width - 1 do
-            tileGrid[y][x] = tileSet[math.random(#tileSet)]
+            tileGrid[y][x] = tileSet[math.random(#tileSet * 4)] or tiles.desert.lowGround.plain
         end
     end
 end
