@@ -69,9 +69,10 @@ debugText = Class {
             local r, g, b, a = love.graphics.getColor()
             love.graphics.setColor(0, 0.8, 0, 0.7)
             love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 0, 0)
-            love.graphics.print('Projectiles: ' .. #Bullets, 0, 8)
-            love.graphics.print('Behaviour: ' .. player.model.doing, 0, 16)
+            love.graphics.print('Bullets: ' .. #Bullets, 0, 8)
+            love.graphics.print('State: ' .. player.model.doing, 0, 16)
             love.graphics.print('Frame: ' .. player.model.animation.currentFrame, 0, 24)
+            love.graphics.print('Life: ' .. player.life, 0, 32)
             love.graphics.setColor(r, g, b, a)
         end
     end,

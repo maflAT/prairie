@@ -6,23 +6,39 @@ function Player:init(model, x, y)
     self.attackRate = model.stats.attackRate
     self.speed = model.stats.speed
     self.model = AnimationModel(model)
-    self.cd = 0
+    self.attackCD = 0
+    self.life = 3
+    self.invincible = 0
 end
 
 function Player:update(dt)
     local animationComplete = self.model.animationComplete
 
-    -- movement logic
-    local ds = self.speed * dt
+    -- get user input
     local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
+    local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
+
+    -- update position
+    local ds = self.speed * dt
     self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
     self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
 
+    -- hit detection
+    if self.invincible <= 0 then
+        for _, mob in pairs(Mobs) do
+            if overlaps(self:getBB(), mob:getBB()) then
+                self.life = self.life - 1
+                self.invincible = 2
+            end
+        end
+    else
+        self.invincible = math.max(0, self.invincible - dt)
+    end
+
     -- fire logic
-    self.cd = self.cd - dt
-    local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
-    if self.cd <= 0 and #aimDirection > 0 then
-            self.cd = self.attackRate
+    self.attackCD = self.attackCD - dt
+    if self.attackCD <= 0 and #aimDirection > 0 then
+            self.attackCD = self.attackRate
             Projectile(self.x, self.y, hAim, vAim)
             self.model:doo('attacking')
             self.model:face(aimDirection)
