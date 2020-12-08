@@ -1,6 +1,12 @@
 
-Map = Class{}
+local Map = Class{player = {}}
 
+local Enemy = require 'Enemy'
+local charData = {
+    Cactus = require '/models/cactus',
+    Coffin = require '/models/coffin',
+    Coyote = require '/models/coyote',
+}
 local atlas = love.graphics.newImage('assets/graphics/Atlas.png')
 local tileWidth = 16
 local tileHeight = 16
@@ -22,7 +28,6 @@ local tiles = {
     }
 }
 
-
 local function fill(tileGrid, width, height)
     local tileSet = tiles.desert.lowGround.highlights
     for y = 0, height - 1 do
@@ -33,11 +38,28 @@ local function fill(tileGrid, width, height)
     end
 end
 
-
-function Map:init()
+function Map:init(player)
+    Map.player = player
+    self.spawntimer = 0
     self.width = math.ceil(GAME_WIDTH / tileWidth)
     self.height = math.ceil(GAME_HEIGHT / tileHeight)
     fill(self, self.width, self.height)
+
+    Enemy.map = self
+    Enemy.player = player
+end
+
+function Map:update(dt)
+    self.player:update(dt)
+    for _, mob in pairs(Mobs) do mob:update(dt) end
+    for _, bullet in pairs(Bullets) do bullet:update(dt) end
+
+    self.spawntimer = self.spawntimer - dt
+    if self.spawntimer <= 0 then
+        self.spawntimer = 2
+        local mobs = {'Coffin', 'Cactus', 'Coyote'}
+        Enemy(charData[mobs[math.random(3)]], math.random(0, GAME_WIDTH), math.random(0, GAME_HEIGHT))
+    end
 end
 
 function Map:draw()

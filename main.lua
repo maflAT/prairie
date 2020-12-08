@@ -8,7 +8,7 @@ Class = require 'assets/hump/class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
 AnimationModel = require 'Model'
-local push, map, charData, player = {}, {}, {}, {}
+local push, player, map = {}, {}, {}
 
 function love.load()
     math.randomseed(os.time())
@@ -26,29 +26,13 @@ function love.load()
         fullscreen = false,
     })
 
-    charData = {
-        Player = require '/models/player',
-        Cactus = require '/models/cactus',
-        Coffin = require '/models/coffin',
-        Coyote = require '/models/coyote',
-    }
-    map = require 'Map' ()
-    player = require 'Player' (charData.Player, GAME_WIDTH / 2, GAME_HEIGHT / 2)
-    local Enemy = require 'Enemy'
-    Enemy.map = map
-    Enemy.player = player
-
-    -- spawn some enemies
-    Enemy(charData.Coffin, 50, 50)
-    Enemy(charData.Cactus, GAME_WIDTH, GAME_HEIGHT - 50)
-    Enemy(charData.Coyote, 50, GAME_HEIGHT - 50)
+    player = require 'Player' (require '/models/player', GAME_WIDTH / 2, GAME_HEIGHT / 2)
+    map = require 'map' (player)
 end
 
 function love.update(dt)
     -- dt = dt / 5
-    player:update(dt)
-    for _, mob in pairs(Mobs) do mob:update(dt) end
-    for _, bullet in pairs(Bullets) do bullet:update(dt) end
+    map:update(dt)
 
     -- cleanup dead entities
     cleanUp(Entities, Mobs, Bullets)
@@ -63,7 +47,8 @@ function love.draw()
     local buffer = {}
     for _, entity in pairs(Entities) do table.insert(buffer, entity) end
     table.sort(buffer, function(a, b) return a.z < b.z end)
-    for _, entity in ipairs(buffer) do entity:draw() end
+    Entities = buffer
+    for _, entity in ipairs(Entities) do entity:draw() end
 
     debugText:draw(map, player)
     push:finish()
