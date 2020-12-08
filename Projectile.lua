@@ -1,12 +1,17 @@
 BULLET_SPEED = 300  --in pixel/sec
-
+BULLET_DAMAGE = 1
 Bullets = {}
 
 local Projectile = Class {__includes = Entity}
 
-function Projectile:init(x, y, vx, vy)
-    Entity.init(self, x, y, 2, 2, 12)
+function Projectile:init(x, y, vx, vy, hostile, targets)
+    Entity.init(self, x, y, 4, 4, 12)
     table.insert(Bullets, self)
+    if hostile then
+        self.targets = targets
+    else
+        self.targets = Mobs
+    end
     self.vx = vx * BULLET_SPEED
     self.vy = vy * BULLET_SPEED
 end
@@ -21,9 +26,9 @@ function Projectile:update(dt)
     end
 
     -- hit detection against Enemies
-    for _, mob in pairs(Mobs) do
-        if overlaps(self.boundingBox, mob.boundingBox) then
-            mob:kill()
+    for _, target in pairs(self.targets) do
+        if overlaps(self.boundingBox, target.boundingBox) then
+            target:hit(BULLET_DAMAGE)
             self:kill()
             break
         end
@@ -31,8 +36,12 @@ function Projectile:update(dt)
 end
 
 function Projectile:draw()
+    local r, g, b, a = love.graphics.getColor()
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle('fill', self.x, self.y, 2, 2)
+    love.graphics.rectangle('fill', self.x - 1, self.y - 1, 2, 2)
+    love.graphics.setColor(0.25, 0.25, 0.4, 1)
+    love.graphics.rectangle('line', self.x - 2, self.y - 2, 4, 4, 1)
+    love.graphics.setColor(r, g, b, a)
 end
 
 return Projectile

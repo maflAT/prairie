@@ -1,13 +1,13 @@
---[[ 
-    TODO: enemy behaviours, game state, hit and death animations, obstacles,
+--[[
+    TODO: game state, hit and death animations, obstacles,
 ]]
 
 -- load global classes / modules; register locals
+require 'utils'
 Class = require 'assets/hump/class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
 AnimationModel = require 'Model'
-require 'utils'
 local push, map, charData, player = {}, {}, {}, {}
 
 function love.load()
@@ -22,8 +22,8 @@ function love.load()
     push = require 'assets/push/push'
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         resizable = true,
-        pixelperfect = true,
-        fullscreen = false
+        pixelperfect = false,
+        fullscreen = false,
     })
 
     charData = {
@@ -40,11 +40,12 @@ function love.load()
 
     -- spawn some enemies
     Enemy(charData.Coffin, 50, 50)
-    Enemy(charData.Cactus, GAME_WIDTH - 50, GAME_HEIGHT - 50)
+    Enemy(charData.Cactus, GAME_WIDTH, GAME_HEIGHT - 50)
     Enemy(charData.Coyote, 50, GAME_HEIGHT - 50)
 end
 
 function love.update(dt)
+    -- dt = dt / 5
     player:update(dt)
     for _, mob in pairs(Mobs) do mob:update(dt) end
     for _, bullet in pairs(Bullets) do bullet:update(dt) end

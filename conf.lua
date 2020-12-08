@@ -19,7 +19,7 @@ function love.conf(t)
 
     -- initial window setup
     t.window.display = 2
-    t.window.fullscreen = true
+    t.window.fullscreen = false
     t.window.fullscreentype = 'desktop'
     t.window.borderless = false
     t.window.resizable = true

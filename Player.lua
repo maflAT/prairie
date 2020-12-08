@@ -13,11 +13,11 @@ end
 
 function Player:update(dt)
     local animationComplete = self.model.animationComplete
-    
+
     -- get user input
     local hMov, vMov, movDirection = dir8('w', 's', 'a', 'd')
     local hAim, vAim, aimDirection = dir8('up', 'down', 'left', 'right')
-    
+
     -- update position
     local ds = self.speed * dt
     self.x = coerce(self.x + hMov * ds, 0, GAME_WIDTH - self.width)
@@ -53,6 +53,10 @@ function Player:update(dt)
         end
     end
     self.model:update(dt)
+end
+
+function Player:hit(damage)
+    self.life = self.life - damage
 end
 
 function Player:draw() self.model:draw(self.x, self.y) end

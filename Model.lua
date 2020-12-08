@@ -46,8 +46,8 @@ function Model:init(model)
     end
 
     -- initialize to default state
-    self:doo('idle')
-    self:face('south')
+    self:doo(model.defaults.behaviour or 'idle')
+    self:face(model.defaults.orientation or 'south')
 end
 
 function Model:doo(behaviour)

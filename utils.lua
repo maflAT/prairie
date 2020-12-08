@@ -56,6 +56,7 @@ function cleanUp(...)
     end
 end
 
+-- convert cardinal directions in string format to X/Y in -1 / +1 range
 function cardinaltoXY(cardinal)
     if cardinal == '' then return 0, 0 end
     local c = string.lower(string.sub(cardinal, 1, 1))
@@ -67,10 +68,8 @@ return nil
 end
 
 -- display various debug information
-debugText = Class {
-    init = function(self)
-        self.enabled = true
-    end,
+debugText = {
+    enabled = true,
     toggle = function(self)
         self.enabled = not self.enabled
     end,
@@ -86,4 +85,4 @@ debugText = Class {
             love.graphics.setColor(r, g, b, a)
         end
     end,
-} ()
+}

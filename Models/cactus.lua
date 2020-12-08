@@ -15,22 +15,20 @@ local defaults = {
         xScale = 1,
         yScale = 1,
         xOffset = 12,
-        yOffset = 17,
+        yOffset = 9,
     },
+    behaviour = 'walking'
 }
 
 local stats = {
     attackRate = 1,     -- in seconds
     speed = 80,         -- in pixel / sec
     modelWidth = 16,
-    modelHeight = 22,
+    modelHeight = 30,
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Front Sheet.png",
-        --    tileWidth = 48,
-        --    tileHeight = 44
-        },
+    [1] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Front Sheet.png"},
     [2] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Back Sheet.png"},
     [3] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Side Sheet.png"},
 }
@@ -67,33 +65,56 @@ local orientations = {
     },
 }
 
+local MARGIN = 10
+local ATTACK_DELAY = 0.2
 local function attackPattern(self, dt)
-    -- move towards player
-    local dx = self.player.x - self.x
-    local dy = self.player.y - self.y
-    local dx2 = dx ^ 2
-    local dy2 = dy ^ 2
-    local hyp = dx2 + dy2
-    if hyp > 100 then
-        local ds = self.speed * dt / hyp
-        local hMov = dx2 * ds * (dx < 0 and -1 or 1)
-        local vMov = dy2 * ds * (dy < 0 and -1 or 1)
-        self.x = coerce(self.x + hMov, 0, GAME_WIDTH - self.width)
-        self.y = coerce(self.y + vMov, 0, GAME_HEIGHT - self.height)
+
+    local behaviour, direction = self.model.doing, ''
+    -- spawn at edge and move away from it
+    if behaviour == 'walking' then
+        if self.x < MARGIN then
+            behaviour, direction = 'walking', 'east'
+        elseif self.x > GAME_WIDTH - self.width - MARGIN then
+            behaviour, direction = 'walking', 'west'
+        elseif self.y < MARGIN then
+            behaviour, direction = 'walking', 'south'
+        elseif self.y > GAME_HEIGHT - self.height - MARGIN then
+            behaviour, direction = 'walking', 'north'
+        else
+            behaviour = 'idle'
+        end
+
+        local dx, dy = cardinaltoXY(direction)
+        self.x = self.x + dx * self.speed * dt
+        self.y = self.y + dy * self.speed * dt
+
+    -- idle till CD wears off / start attack animation
+    elseif behaviour == 'idle' then
+        self.attackCD = math.max(0, self.attackCD - dt)
+        if self.attackCD <= ATTACK_DELAY then
+            behaviour = 'attacking'
+        end
+
+    -- shoot towards player / transition to idle after animation is done
+    elseif behaviour == 'attacking' then
+        self.attackCD = math.max(0, self.attackCD - dt)
+        if self.attackCD <= 0 then
+            local dx = (self.player.x + 8) - (self.x + 8)
+            local dy = (self.player.y + 10) - (self.y + 20)
+            local dx2, dy2 = dx^2, dy^2
+            local vx = math.sqrt(dx2 / (dx2 + dy2))
+            vx = vx * (dx < 0 and -1 or 1)
+            local vy = math.sqrt(dy2 / (dx2 + dy2))
+            vy = vy * (dy < 0 and -1 or 1)
+            Projectile(self.x + 8, self.y + 20, vx, vy, true, {self.player})
+            self.attackCD = self.attackRate
+        end
+        if self.model.animationComplete then
+            behaviour = 'idle'
+        end
     end
 
-    -- determine correct orientation
-    local behaviour, orientation
-    if dx2 < dy2 then
-        orientation = dy < 0 and 'north' or 'south'
-    else
-        orientation = dx < 0 and 'west' or 'east'
-    end
-
-    -- play attack animation if within certain range
-    if hyp < 5000 then behaviour = 'attacking' else behaviour = 'walking' end
-
-    return behaviour, orientation
+    return behaviour, direction
 end
 
 return {
