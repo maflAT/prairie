@@ -4,9 +4,9 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 -- define global constants here to keep 'main.lua' cleaner
-GAME_WIDTH = 320
+GAME_WIDTH = 384
 GAME_HEIGHT = 240
-WINDOW_WIDTH = 1280
+WINDOW_WIDTH = 1152
 WINDOW_HEIGHT = 720
 
 function love.conf(t)
@@ -19,12 +19,14 @@ function love.conf(t)
 
     -- initial window setup
     t.window.display = 2
+    t.window.fullscreen = true
+    t.window.fullscreentype = 'desktop'
+    t.window.borderless = false
+    t.window.resizable = true
+    t.window.vsync = -1
     t.window.width = WINDOW_WIDTH
     t.window.height = WINDOW_HEIGHT
     t.window.minwidth = GAME_WIDTH
     t.window.minheight = GAME_HEIGHT
     t.window.title = "Revenge of the Prairy King"
-    t.window.resizable = true
-    t.window.vsync = -1
-    t.window.borderless = false
 end

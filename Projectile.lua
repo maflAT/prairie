@@ -25,6 +25,7 @@ function Projectile:update(dt)
         if overlaps(self.boundingBox, mob.boundingBox) then
             mob:kill()
             self:kill()
+            break
         end
     end
 end

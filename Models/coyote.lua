@@ -65,35 +65,36 @@ local orientations = {
 }
 
 local function attackPattern(self, dt)
-    -- move towards player
+    local turnthreshold = math.min(self.width / 2, self.height / 2)
+    local direction = self.model.facing
     local dx = self.player.x - self.x
     local dy = self.player.y - self.y
-    local dx2 = dx ^ 2
-    local dy2 = dy ^ 2
-    local hyp = dx2 + dy2
-    if hyp > 100 then
-        local hMov, vMov = 0, 0
-        if dx2 < dy2 then
-            vMov = self.speed * dt * (dy < 0 and -1 or 1)
-        else
-            hMov = self.speed * dt * (dx < 0 and -1 or 1)
-        end
-        self.x = coerce(self.x + hMov, 0, GAME_WIDTH - self.width)
-        self.y = coerce(self.y + vMov, 0, GAME_HEIGHT - self.height)
-    end
-
-    -- determine correct orientation
-    local behaviour, orientation
-    if dx2 < dy2 then
-        orientation = dy < 0 and 'north' or 'south'
-    else
-        orientation = dx < 0 and 'west' or 'east'
-    end
 
     -- play attack animation if within certain range
-    if hyp < 5000 then behaviour = 'attacking' else behaviour = 'walking' end
+    local behaviour = dx^2 + dy^2 < 5000 and 'attacking' or 'walking'
 
-    return behaviour, orientation
+    -- move towards player
+    if math.abs(dx) > turnthreshold or math.abs(dy) > turnthreshold then
+
+        -- if currently facing towards player and sufficiently far away,
+        if     dx >  turnthreshold and direction == 'east'  then -- keep direction
+        elseif dx < -turnthreshold and direction == 'west'  then
+        elseif dy >  turnthreshold and direction == 'south' then
+        elseif dy < -turnthreshold and direction == 'north' then
+
+            -- if still outside of threshold area, turn towards player
+        else
+            if math.abs(dx) < math.abs(dy) then
+                direction = dy < 0 and 'north' or 'south'
+            else
+                direction = dx < 0 and 'west' or 'east'
+            end
+        end
+        dx, dy = cardinaltoXY(direction)
+        self.x = coerce(self.x + dx * self.speed * dt, 0, GAME_WIDTH - self.width)
+        self.y = coerce(self.y + dy * self.speed * dt, 0, GAME_HEIGHT - self.height)
+    end
+    return behaviour, direction
 end
 
 return {
@@ -101,6 +102,6 @@ return {
     stats = stats,
     sprites = sprites,
     behaviours = behaviours,
-    orientations= orientations,
+    orientations = orientations,
     attackPattern = attackPattern,
 }

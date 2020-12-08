@@ -35,8 +35,8 @@ end
 
 
 function Map:init()
-    self.width = GAME_WIDTH / tileWidth
-    self.height = GAME_HEIGHT / tileHeight
+    self.width = math.ceil(GAME_WIDTH / tileWidth)
+    self.height = math.ceil(GAME_HEIGHT / tileHeight)
     fill(self, self.width, self.height)
 end
 

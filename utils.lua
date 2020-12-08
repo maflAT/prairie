@@ -56,6 +56,16 @@ function cleanUp(...)
     end
 end
 
+function cardinaltoXY(cardinal)
+    if cardinal == '' then return 0, 0 end
+    local c = string.lower(string.sub(cardinal, 1, 1))
+    if c == 'e' then return  1,  0 end
+    if c == 'w' then return -1,  0 end
+    if c == 's' then return  0,  1 end
+    if c == 'n' then return  0, -1 end
+return nil
+end
+
 -- display various debug information
 debugText = Class {
     init = function(self)

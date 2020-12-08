@@ -30,6 +30,7 @@ function Player:update(dt)
             if overlaps(self.boundingBox, mob.boundingBox) then
                 self.life = self.life - 1
                 self.invincible = 2
+                break
             end
         end
     else

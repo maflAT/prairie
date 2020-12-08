@@ -22,7 +22,8 @@ function love.load()
     push = require 'assets/push/push'
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         resizable = true,
-        pixelperfect = false,
+        pixelperfect = true,
+        fullscreen = false
     })
 
     charData = {
@@ -36,7 +37,7 @@ function love.load()
     local Enemy = require 'Enemy'
     Enemy.map = map
     Enemy.player = player
-    
+
     -- spawn some enemies
     Enemy(charData.Coffin, 50, 50)
     Enemy(charData.Cactus, GAME_WIDTH - 50, GAME_HEIGHT - 50)
@@ -68,7 +69,13 @@ function love.draw()
 end
 
 function love.keypressed(k)
-    if k == 'escape' then love.event.quit()
+    if k == 'escape' then
+        if love.window.getFullscreen() then
+            push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
+        else
+            love.event.quit()
+        end
+    elseif k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
     elseif k == '^' then debugText:toggle()
     end
 end
