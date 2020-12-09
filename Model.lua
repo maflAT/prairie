@@ -4,13 +4,6 @@
 local Animation = require 'Animation'
 local Model = Class{}
 
-Model.doing = ''                 -- current behaviour as string
-Model.facing = ''                -- current orientation as string
-Model.behaviour = {}             -- current behaviour as object
-Model.orientation = {}           -- current orientation as object
-Model.animation = {}             -- current animation (short hand)
-Model.animationComplete = false
-
 function Model:init(model)
     self.behaviours = model.behaviours
     self.orientations = model.orientations
@@ -36,13 +29,14 @@ function Model:init(model)
     end
 
     -- complete attributes for each behaviour
-    for _, attributes in pairs(self.behaviours) do
+    self.animations = {}
+    for behaviour, attributes in pairs(self.behaviours) do
         -- fill in defaults for missing attributes
         for attribute, defaultValue in pairs(model.defaults.behaviours) do
             attributes[attribute] = attributes[attribute] or defaultValue
         end
         -- initialize animation sequence for each behaviour
-        attributes.animation = Animation(attributes.frames, attributes.updateRate)
+        self.animations[behaviour] = Animation(attributes.frames, attributes.updateRate)
     end
 
     -- initialize to default state
@@ -56,7 +50,7 @@ function Model:doo(behaviour)
     if behaviour ~= nil and behaviour ~= self.doing and self.behaviours[behaviour] then
         self.doing = behaviour
         self.behaviour = self.behaviours[behaviour]
-        self.animation = self.behaviour.animation
+        self.animation = self.animations[behaviour]
         self.animation:reset()
     end
 end
@@ -76,11 +70,9 @@ function Model:update(dt)
 end
 
 function Model:draw(x, y)
-    local b, o = self.behaviour, self.orientation
-    local sheet = o.spriteSheet
-    local quad = o.quads[b.animation:draw()]
-    love.graphics.draw(sheet, quad, round(x), round(y),
-    0, o.xScale, o.yScale, o.xOffset, o.yOffset)
+    local o = self.orientation
+    love.graphics.draw(o.spriteSheet, o.quads[self.animation:draw()],
+    round(x), round(y), 0, o.xScale, o.yScale, o.xOffset, o.yOffset)
 end
 
 return Model
