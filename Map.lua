@@ -58,8 +58,21 @@ function Map:update(dt)
     if self.spawntimer <= 0 then
         self.spawntimer = 2
         local mobs = {'Coffin', 'Cactus', 'Coyote'}
-        Enemy(charData[mobs[math.random(3)]], math.random(0, GAME_WIDTH), math.random(0, GAME_HEIGHT))
+        self:spawnMob(mobs[math.random(3)])
     end
+end
+
+function Map:spawnMob(mob)
+    local model = charData[mob]
+    local xRange = math.random(0, GAME_WIDTH - model.stats.modelWidth)
+    local yRange = math.random(0, GAME_HEIGHT - model.stats.modelHeight)
+    local edges = {
+        [1] = function () return xRange, 0 - model.stats.modelHeight end,
+        [2] = function () return xRange, GAME_HEIGHT end,
+        [3] = function () return 0 - model.stats.modelWidth, yRange end,
+        [4] = function () return GAME_WIDTH, yRange end,
+    }
+    Enemy(model, edges[math.random(4)]())
 end
 
 function Map:draw()

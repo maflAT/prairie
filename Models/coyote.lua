@@ -65,8 +65,22 @@ local orientations = {
 }
 
 local function attackPattern(self, dt)
-    local turnthreshold = math.min(self.width / 2, self.height / 2)
-    local direction = self.model.facing
+    local ds = self.speed * dt
+    -- spawn at edge and move away from it
+    if self.x < 0 then
+        self.x = self.x + ds
+        return 'walking', 'east'
+    elseif self.x > GAME_WIDTH - self.width then
+        self.x = self.x - ds
+        return 'walking', 'west'
+    elseif self.y < 0 then
+        self.y = self.y + ds
+        return 'walking', 'south'
+    elseif self.y > GAME_HEIGHT - self.height then
+        self.y = self.y - ds
+        return 'walking', 'north'
+    end
+
     local dx = self.player.x - self.x
     local dy = self.player.y - self.y
 
@@ -74,6 +88,8 @@ local function attackPattern(self, dt)
     local behaviour = dx^2 + dy^2 < 5000 and 'attacking' or 'walking'
 
     -- move towards player
+    local turnthreshold = math.min(self.width / 2, self.height / 2)
+    local direction = self.model.facing
     if math.abs(dx) > turnthreshold or math.abs(dy) > turnthreshold then
 
         -- if currently facing towards player and sufficiently far away,
@@ -91,8 +107,8 @@ local function attackPattern(self, dt)
             end
         end
         dx, dy = cardinaltoXY(direction)
-        self.x = coerce(self.x + dx * self.speed * dt, 0, GAME_WIDTH - self.width)
-        self.y = coerce(self.y + dy * self.speed * dt, 0, GAME_HEIGHT - self.height)
+        self.x = self.x + dx * ds
+        self.y = self.y + dy * ds
     end
     return behaviour, direction
 end

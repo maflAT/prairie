@@ -30,8 +30,9 @@ function love.load()
     map = require 'map' (player)
 end
 
+TIMELAPSE = 1
 function love.update(dt)
-    -- dt = dt / 5
+    dt = dt / (TIMELAPSE > 0 and TIMELAPSE or 1)
     map:update(dt)
 
     -- cleanup dead entities
@@ -63,6 +64,8 @@ function love.keypressed(k)
         end
     elseif k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
     elseif k == '^' then debugText:toggle()
+    elseif k == 'f5' then TIMELAPSE = TIMELAPSE + 1
+    elseif k == 'f6' then TIMELAPSE = TIMELAPSE - 1
     end
 end
 

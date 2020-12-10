@@ -78,8 +78,8 @@ local function attackPattern(self, dt)
         local ds = self.speed * dt / hyp
         local hMov = dx2 * ds * (dx < 0 and -1 or 1)
         local vMov = dy2 * ds * (dy < 0 and -1 or 1)
-        self.x = coerce(self.x + hMov, 0, GAME_WIDTH - self.width)
-        self.y = coerce(self.y + vMov, 0, GAME_HEIGHT - self.height)
+        self.x = self.x + hMov, 0
+        self.y = self.y + vMov, 0
     end
 
     -- determine correct orientation
