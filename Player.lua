@@ -59,8 +59,11 @@ end
 
 function Player:hit(damage)
     if self.hitCD <= 0 then
-        self.hp = self.hp - damage
         self.hitCD = self.iTime
+        self.hp = self.hp - damage
+        if self.hp <= 0 then
+            gGameState = 'gameover'
+        end
     end
 end
 

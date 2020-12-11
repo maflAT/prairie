@@ -45,17 +45,6 @@ function overlaps(a, b)
     end
 end
 
--- remove all entities from list, that are marked for deletion
-function cleanUp(...)
-    for i = 1, select('#', ...) do
-        local killList = {}
-        for k, entity in pairs(select(i, ...)) do
-            if entity.delete then table.insert(killList, k) end
-        end
-        for _, entity in pairs(killList) do select(i, ...)[entity] = nil end
-    end
-end
-
 -- convert cardinal directions in string format to X/Y in -1 / +1 range
 function cardinaltoXY(cardinal)
     if cardinal == '' then return 0, 0 end
@@ -64,7 +53,30 @@ function cardinaltoXY(cardinal)
     if c == 'w' then return -1,  0 end
     if c == 's' then return  0,  1 end
     if c == 'n' then return  0, -1 end
-return nil
+    return nil
+end
+
+-- pick a random element of a list/table
+function pick(list)
+    -- create an index of the lists keys
+    local index = {}
+    for key, _ in pairs(list) do
+        table.insert(index, key)
+    end
+    return list[index[math.random(#index)]]
+end
+
+-- return the lenth of a list/table by counting each entry
+function len(list)
+    local len = 0
+    for _, _ in pairs(list) do len = len + 1 end
+    return len
+end
+
+-- apply function to all arguments
+function doAll(f, ...)
+    assert(type(f) == 'function')
+    for i = 1, select('#', ...) do f(select(i, ...)) end
 end
 
 -- display various debug information

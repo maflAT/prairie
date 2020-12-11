@@ -2,11 +2,10 @@
 local Map = Class{player = {}}
 
 local Enemy = require 'Enemy'
-local charData = {
+local mobTypes = {
     Cactus = require '/models/cactus',
     Coffin = require '/models/coffin',
-    Coyote = require '/models/coyote',
-}
+    Coyote = require '/models/coyote'}
 local atlas = love.graphics.newImage('assets/graphics/Atlas.png')
 local tileWidth = 16
 local tileHeight = 16
@@ -57,13 +56,12 @@ function Map:update(dt)
     self.spawntimer = self.spawntimer - dt
     if self.spawntimer <= 0 then
         self.spawntimer = 2
-        local mobs = {'Coffin', 'Cactus', 'Coyote'}
-        self:spawnMob(mobs[math.random(3)])
+        self:spawnMob(pick(mobTypes))
     end
 end
 
 function Map:spawnMob(mob)
-    local model = charData[mob]
+    local model = mob
     local xRange = math.random(0, GAME_WIDTH - model.stats.modelWidth)
     local yRange = math.random(0, GAME_HEIGHT - model.stats.modelHeight)
     local edges = {
@@ -72,7 +70,7 @@ function Map:spawnMob(mob)
         [3] = function () return 0 - model.stats.modelWidth, yRange end,
         [4] = function () return GAME_WIDTH, yRange end,
     }
-    Enemy(model, edges[math.random(4)]())
+    Enemy(model, pick(edges)())
 end
 
 function Map:draw()

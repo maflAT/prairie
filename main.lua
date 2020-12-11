@@ -8,6 +8,7 @@ Class = require 'assets/hump/class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
 AnimationModel = require 'Model'
+gGameState = 'init'
 local push, player, map = {}, {}, {}
 
 function love.load()
@@ -28,28 +29,39 @@ function love.load()
 
     player = require 'Player' (require '/models/player', GAME_WIDTH / 2, GAME_HEIGHT / 2)
     map = require 'map' (player)
+
+    gGameState = 'menu'
 end
 
-TIMELAPSE = 1
+local debug_Timelapse = 1
 function love.update(dt)
-    dt = dt / (TIMELAPSE > 0 and TIMELAPSE or 1)
-    map:update(dt)
 
-    -- cleanup dead entities
-    cleanUp(Entities, Mobs, Bullets)
+    if gGameState == 'menu' then
+        player.model:update(dt)
+
+    elseif gGameState == 'playing' then
+        dt = dt / (debug_Timelapse > 0 and debug_Timelapse or 1)
+        map:update(dt)
+
+        -- remove dead entities from collections
+        doAll(cleanUp, gEntities, Mobs, Bullets)
+    end
 end
 
 function love.draw()
     push:start()
-    love.graphics.clear(0.9, 0.8, 0.3, 1)
-    map:draw()
 
-    -- sort entities in z-Order so they overlap correctly
-    local buffer = {}
-    for _, entity in pairs(Entities) do table.insert(buffer, entity) end
-    table.sort(buffer, function(a, b) return a.z < b.z end)
-    Entities = buffer
-    for _, entity in ipairs(Entities) do entity:draw() end
+    if gGameState == 'menu' then
+        love.graphics.clear(0.9, 0.8, 0.3, 1)
+        map:draw()
+        player:draw()
+        love.graphics.printf('Press "Enter" to play', 0, 0, GAME_WIDTH, 'center')
+    elseif gGameState == 'playing' then
+        map:draw()
+        drawAll(gEntities)
+    elseif gGameState == 'gameover' then
+        love.graphics.printf('Press "Enter" to play', 0, 0, GAME_WIDTH, 'center')
+    end
 
     debugText:draw(map, player)
     push:finish()
@@ -62,10 +74,11 @@ function love.keypressed(k)
         else
             love.event.quit()
         end
+    elseif k == 'return' then gGameState = 'playing'
     elseif k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
     elseif k == '^' then debugText:toggle()
-    elseif k == 'f5' then TIMELAPSE = TIMELAPSE + 1
-    elseif k == 'f6' then TIMELAPSE = TIMELAPSE - 1
+    elseif k == 'f5' then debug_Timelapse = debug_Timelapse + 1
+    elseif k == 'f6' then debug_Timelapse = debug_Timelapse - 1
     end
 end
 
