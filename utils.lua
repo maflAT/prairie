@@ -81,7 +81,7 @@ debugText = {
             love.graphics.print('Bullets: ' .. #Bullets, 0, 8)
             love.graphics.print('State: ' .. player.model.doing, 0, 16)
             love.graphics.print('Frame: ' .. player.model.animation.currentFrame, 0, 24)
-            love.graphics.print('Life: ' .. player.life, 0, 32)
+            love.graphics.print('Life: ' .. player.hp, 0, 32)
             love.graphics.setColor(r, g, b, a)
         end
     end,

@@ -21,9 +21,11 @@ local defaults = {
 
 local stats = {
     attackRate = 1,     -- in seconds
-    speed = 80,         -- in pixel / sec
+    moveSpeed = 80,         -- in pixel / sec
     modelWidth = 24,
     modelHeight = 32,
+    hitPoints = 2,
+    invincibilityTime = 0.2,   -- invincibility time after getting hit [s]
 }
 
 local sprites = {
