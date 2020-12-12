@@ -1,10 +1,10 @@
-Mobs = {}
+gMobs = {}
 
 local Enemy = Class {__includes = Entity, map = {}, player = {}}
 
 function Enemy:init(model, x, y)
     Entity.init(self, x, y, model.stats.modelWidth, model.stats.modelHeight)
-    table.insert(Mobs, self)
+    table.insert(gMobs, self)
     self.model = AnimationModel(model)
     self.attackPattern = model.attackPattern
 

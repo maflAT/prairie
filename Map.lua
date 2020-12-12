@@ -50,14 +50,21 @@ end
 
 function Map:update(dt)
     self.player:update(dt)
-    for _, mob in pairs(Mobs) do mob:update(dt) end
-    for _, bullet in pairs(Bullets) do bullet:update(dt) end
+    for _, mob in pairs(gMobs) do mob:update(dt) end
+    for _, bullet in pairs(gBullets) do bullet:update(dt) end
 
     self.spawntimer = self.spawntimer - dt
     if self.spawntimer <= 0 then
         self.spawntimer = 2
         self:spawnMob(pick(mobTypes))
     end
+end
+
+function Map:reset()
+    gMobs = {}
+    gBullets = {}
+    gEntities= {self.player}
+    self.player:reset()
 end
 
 function Map:spawnMob(mob)

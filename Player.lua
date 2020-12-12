@@ -1,17 +1,26 @@
 
 local Player = Class {__includes = Entity}
 
-function Player:init(model, x, y)
-    Entity.init(self, x, y, model.stats.modelWidth, model.stats.modelHeight)
+function Player:init(model)
+    Entity.init(self, 0, 0, model.stats.modelWidth, model.stats.modelHeight)
     self.model = AnimationModel(model)
-    self.speed = model.stats.moveSpeed
-    self.hp = model.stats.hitPoints
-    self.attackRate = model.stats.attackRate
-    self.attackCD = 0
+    self.defaultStats = model.stats
+    self:reset()
+end
 
+function Player:reset(x, y)
+    self.x = x or (GAME_WIDTH - self.width) / 2
+    self.y = y or (GAME_HEIGHT - self.height) / 2
+    self.hp = self.defaultStats.hitPoints
+    self.speed = self.defaultStats.moveSpeed
+    self.attackRate = self.defaultStats.attackRate
+    self.attackCD = 0
     -- invincibility time after getting hit
-    self.iTime = model.stats.invincibilityTime
+    self.iTime = self.defaultStats.invincibilityTime
     self.hitCD = 0
+    self.model:doo('idle')
+    self.model:face('south')
+    Entity.update(self)
 end
 
 function Player:update(dt)
@@ -30,7 +39,7 @@ function Player:update(dt)
     if self.hitCD > 0 then
         self.hitCD = math.max(0, self.hitCD - dt)
     else
-        for _, mob in pairs(Mobs) do
+        for _, mob in pairs(gMobs) do
             if overlaps(self.boundingBox, mob.boundingBox) then
                 self:hit(1)
                 break

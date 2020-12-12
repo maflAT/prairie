@@ -1,5 +1,5 @@
 --[[
-    TODO: game state, hit and death animations, obstacles,
+    TODO: game state, progression, score and health display, hit and death animations, obstacles,
 ]]
 
 -- load global classes / modules; register locals
@@ -9,16 +9,13 @@ Entity = require 'Entity'
 Projectile = require 'Projectile'
 AnimationModel = require 'Model'
 gGameState = 'init'
-local push, player, map = {}, {}, {}
+local push, player, map, overlay = {}, {}, {}, {}
+
 
 function love.load()
     math.randomseed(os.time())
 
     -- load classes / modules / assets
-    -- outlineFont = love.graphics.newFont('/assets/fonts/Fipps.otf', 8)
-    smallFont = love.graphics.newFont('/assets/fonts/goodbyeDespair.ttf', 8)
-    tinyFont = love.graphics.newFont('/assets/fonts/04B_03B_.ttf', 8)
-    love.graphics.setFont(smallFont)
     love.graphics.setDefaultFilter('nearest', 'nearest')
     push = require 'assets/push/push'
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -27,11 +24,13 @@ function love.load()
         fullscreen = false,
     })
 
-    player = require 'Player' (require '/models/player', GAME_WIDTH / 2, GAME_HEIGHT / 2)
+    player = require 'Player' (require '/models/player')
     map = require 'map' (player)
 
+    overlay = require 'overlay'
     gGameState = 'menu'
 end
+
 
 local debug_Timelapse = 1
 function love.update(dt)
@@ -44,43 +43,70 @@ function love.update(dt)
         map:update(dt)
 
         -- remove dead entities from collections
-        doAll(cleanUp, gEntities, Mobs, Bullets)
+        doAll(cleanUp, gEntities, gMobs, gBullets)
+
+    elseif gGameState == 'pause'  then
+    elseif gGameState == 'gameover'  then
     end
 end
+
 
 function love.draw()
     push:start()
 
-    if gGameState == 'menu' then
-        love.graphics.clear(0.9, 0.8, 0.3, 1)
-        map:draw()
-        player:draw()
-        love.graphics.printf('Press "Enter" to play', 0, 0, GAME_WIDTH, 'center')
-    elseif gGameState == 'playing' then
-        map:draw()
-        drawAll(gEntities)
-    elseif gGameState == 'gameover' then
-        love.graphics.printf('Press "Enter" to play', 0, 0, GAME_WIDTH, 'center')
-    end
+    map:draw()
+    drawAll(gEntities)
+    overlay[gGameState]()
 
-    debugText:draw(map, player)
+    -- if gGameState == 'menu' then
+    -- elseif gGameState == 'playing' then
+    -- elseif gGameState == 'pause'  then
+    -- elseif gGameState == 'gameover'  then
+    -- end
+
+    overlay.debug:draw(map, player)
     push:finish()
 end
 
+
 function love.keypressed(k)
-    if k == 'escape' then
-        if love.window.getFullscreen() then
-            push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
-        else
-            love.event.quit()
-        end
-    elseif k == 'return' then gGameState = 'playing'
-    elseif k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
-    elseif k == '^' then debugText:toggle()
+    -- shared keybinds for all game states
+    if k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
+    elseif k == 'f1' then overlay.debug:toggle()
     elseif k == 'f5' then debug_Timelapse = debug_Timelapse + 1
     elseif k == 'f6' then debug_Timelapse = debug_Timelapse - 1
     end
+
+    -- state specific keybinds
+    if gGameState == 'menu' then
+        if k == 'escape' then
+            love.event.quit()
+        elseif k == 'return' then
+            gGameState = 'playing'
+            map:reset()
+            player:reset()
+        end
+    elseif gGameState == 'playing' then
+        if k == 'escape' or k == 'p' then
+            gGameState = 'pause'
+        end
+    elseif gGameState == 'pause'  then
+        if k == 'escape' then
+            gGameState = 'menu'
+            map:reset()
+            player:reset()
+        elseif k == 'p' then
+            gGameState = 'playing'
+        end
+    elseif gGameState == 'gameover'  then
+        if k == 'escape' then
+            gGameState = 'menu'
+            map:reset()
+            player:reset()
+        end
+    end
 end
+
 
 function love.resize(w, h)
     push:resize(w, h)

@@ -1,16 +1,16 @@
 BULLET_SPEED = 300  --in pixel/sec
 BULLET_DAMAGE = 1
-Bullets = {}
+gBullets = {}
 
 local Projectile = Class {__includes = Entity}
 
 function Projectile:init(x, y, vx, vy, hostile, targets)
     Entity.init(self, x, y, 4, 4, 12)
-    table.insert(Bullets, self)
+    table.insert(gBullets, self)
     if hostile then
         self.targets = targets
     else
-        self.targets = Mobs
+        self.targets = gMobs
     end
     self.vx = vx * BULLET_SPEED
     self.vy = vy * BULLET_SPEED

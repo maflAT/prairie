@@ -78,23 +78,3 @@ function doAll(f, ...)
     assert(type(f) == 'function')
     for i = 1, select('#', ...) do f(select(i, ...)) end
 end
-
--- display various debug information
-debugText = {
-    enabled = true,
-    toggle = function(self)
-        self.enabled = not self.enabled
-    end,
-    draw = function(self, map, player)
-        if self.enabled then
-            local r, g, b, a = love.graphics.getColor()
-            love.graphics.setColor(0, 0.8, 0, 0.7)
-            love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 0, 0)
-            love.graphics.print('Bullets: ' .. #Bullets, 0, 8)
-            love.graphics.print('State: ' .. player.model.doing, 0, 16)
-            love.graphics.print('Frame: ' .. player.model.animation.currentFrame, 0, 24)
-            love.graphics.print('Life: ' .. player.hp, 0, 32)
-            love.graphics.setColor(r, g, b, a)
-        end
-    end,
-}
