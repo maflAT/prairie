@@ -1,5 +1,5 @@
 --[[
-    TODO: game state, progression, score and health display, hit and death animations, obstacles,
+    TODO: hit and death animations, obstacles,
 ]]
 
 -- load global classes / modules; register locals
@@ -18,15 +18,11 @@ function love.load()
     -- load classes / modules / assets
     love.graphics.setDefaultFilter('nearest', 'nearest')
     push = require 'assets/push/push'
-    push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-        resizable = true,
-        pixelperfect = false,
-        fullscreen = false,
-    })
+    push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
+        {resizable = true, pixelperfect = false, fullscreen = false,})
 
     player = require 'Player' (require '/models/player')
     map = require 'map' (player)
-
     overlay = require 'overlay'
     gGameState = 'menu'
 end
@@ -56,7 +52,7 @@ function love.draw()
 
     map:draw()
     drawAll(gEntities)
-    overlay[gGameState]()
+    overlay[gGameState](map)
 
     -- if gGameState == 'menu' then
     -- elseif gGameState == 'playing' then
@@ -84,7 +80,6 @@ function love.keypressed(k)
         elseif k == 'return' then
             gGameState = 'playing'
             map:reset()
-            player:reset()
         end
     elseif gGameState == 'playing' then
         if k == 'escape' or k == 'p' then
@@ -94,7 +89,6 @@ function love.keypressed(k)
         if k == 'escape' then
             gGameState = 'menu'
             map:reset()
-            player:reset()
         elseif k == 'p' then
             gGameState = 'playing'
         end
@@ -102,7 +96,6 @@ function love.keypressed(k)
         if k == 'escape' then
             gGameState = 'menu'
             map:reset()
-            player:reset()
         end
     end
 end

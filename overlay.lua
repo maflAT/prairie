@@ -20,67 +20,86 @@ local overlay = {}
 
 -- main menu overlay
 overlay['menu'] = function ()
-    color(0, 0, 0, 0.4)
-    love.graphics.rectangle('fill', cx - 120, 35, 240, 30, 7, 7)
-    love.graphics.rectangle('line', cx - 122, 33, 244, 34, 9, 9)
+    color(0, 0, 0, 0.5)
+    love.graphics.rectangle('fill', cx - 120, 29, 240, 30, 7, 7)
+    love.graphics.rectangle('line', cx - 122, 27, 244, 34, 9, 9)
     color(1, 0.98, 0.9, 1)
     font(titleFont)
-    printf('Revenge of the Prairie King', 0, 40, ww, 'center')
+    printf('Revenge of the Prairie King', 0, 35, ww, 'center')
     color(1, 1, 1, 1)
     printf('Press ENTER to play', 0, 80, ww, 'center')
 
-    color(1, 1, 1, 0.6)
+    color(1, 1, 1, 0.7)
     font(keyCapFont)
     printf('W', 0, cy + 25, cx, 'center')
     printf('ASD', 0, cy + 38, cx, 'center')
 
     font(keyCapSymbols)
+    -- U/N/Y/O represent up/left/down/right arrow keys
     printf('U', cx, cy + 25, cx, 'center')
     printf('NYO', cx, cy + 38, cx, 'center')
 
     font(titleFont)
-    printf('move', 0, cy + 50, cx, 'center')
+    printf('move', -1, cy + 50, cx, 'center')
     printf('shoot', cx, cy + 50, cx, 'center')
 
     font(smallFont)
     printf("ESC: quit\t\tP: pause\t\tF11: fullscreen\t\tF1: debug info", 0, wh - 10, ww, 'center')
 end
 
--- placeholder for play state overlay
-overlay['playing'] = function () end
+-- gameplay info overlay
+overlay['playing'] = function (map)
+    -- stage display
+    font(titleFont)
+    color(1, 1, 1, 0.5)
+    printf('Stage' .. tostring(map.stage), ww - 37, 2, 36, 'center')
+
+    -- stage progress bar
+    local pbTop = 38
+    local pbBot = wh - 20
+    local progress = 1 - (map.stageTimer / map.STAGE_TIME)
+    local pbLenght = (pbBot - pbTop) * progress
+    love.graphics.rectangle('fill', ww - 22, pbBot - pbLenght, 5, pbLenght, 2, 2)
+
+    -- lives display
+    local hp = map.player.hp
+    if hp >= 1 then love.graphics.draw(map.atlas, map.skull, cx - 48, 0) end
+    if hp >= 2 then love.graphics.draw(map.atlas, map.skull, cx - 16, 0) end
+    if hp >= 3 then love.graphics.draw(map.atlas, map.skull, cx + 16, 0) end
+end
 
 -- pause menu
 overlay['pause'] = function ()
-    color(0, 0, 0, 0.4)
-    love.graphics.rectangle('fill', cx - 120, 35, 240, 30, 7, 7)
-    love.graphics.rectangle('line', cx - 122, 33, 244, 34, 9, 9)
+    color(0, 0, 0, 0.5)
+    love.graphics.rectangle('fill', cx - 120, 29, 240, 30, 7, 7)
+    love.graphics.rectangle('line', cx - 122, 27, 244, 34, 9, 9)
     color(1, 0.98, 0.9, 1)
     font(titleFont)
-    printf('PAUSE', 0, 40, ww, 'center')
+    printf('PAUSE', 0, 35, ww, 'center')
     color(1, 1, 1, 1)
     printf('Press P to resume', 0, 80, ww, 'center')
 
-    color(1, 1, 1, 0.6)
+    color(1, 1, 1, 0.7)
     font(smallFont)
     printf("ESC: main menu\t\tP: resume\t\tF11: fullscreen\t\tF1: debug info", 0, wh - 10, ww, 'center')
 end
 
 -- game over screen
-overlay['gameover'] = function ()
-    color(0, 0, 0, 0.4)
-    love.graphics.rectangle('fill', cx - 120, 35, 240, 30, 7, 7)
-    love.graphics.rectangle('line', cx - 122, 33, 244, 34, 9, 9)
+overlay['gameover'] = function (map)
+    color(0, 0, 0, 0.5)
+    love.graphics.rectangle('fill', cx - 120, 29, 240, 30, 7, 7)
+    love.graphics.rectangle('line', cx - 122, 27, 244, 34, 9, 9)
     color(1, 0.98, 0.9, 1)
     font(titleFont)
-    printf('GAME OVER', 0, 40, ww, 'center')
+    printf('GAME OVER', 0, 35, ww, 'center')
     color(1, 1, 1, 1)
-    printf('You have reached level XXX', 0, 80, ww, 'center')
+    printf('You have reached Stage '..map.stage, 0, 80, ww, 'center')
     printf('Press ESC to return to main menu', 0, cy + 40, ww, 'center')
 end
 
 -- display various debug information
 overlay['debug'] = {
-    enabled = true,
+    enabled = false,
     toggle = function(self)
         self.enabled = not self.enabled
     end,
@@ -94,6 +113,9 @@ overlay['debug'] = {
             print('Player State: ' .. player.model.doing, 1, 24)
             print('Frame: ' .. player.model.animation.currentFrame, 1, 32)
             print('Life: ' .. player.hp, 1, 40)
+            print('stage: ' .. tostring(map.stage), 1, 48)
+            print('stage timer: ' .. string.format('%.1f', map.stageTimer or 0), 1, 56)
+            print('spawn timer: ' .. string.format('%.1f', map.spawnTimer or 0), 1, 64)
         end
     end,
 }
