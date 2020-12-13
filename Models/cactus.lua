@@ -71,34 +71,34 @@ local MARGIN = 10
 local ATTACK_DELAY = 0.2
 local function attackPattern(self, dt)
 
-    local behaviour, direction = self.model.doing, ''
+    local action, orientation = self.model.doing, ''
     -- spawn at edge and move away from it
-    if behaviour == 'walking' then
+    if action == 'walking' then
         if self.x < MARGIN then
-            behaviour, direction = 'walking', 'east'
+            action, orientation = 'walking', 'east'
         elseif self.x > GAME_WIDTH - self.width - MARGIN then
-            behaviour, direction = 'walking', 'west'
+            action, orientation = 'walking', 'west'
         elseif self.y < MARGIN then
-            behaviour, direction = 'walking', 'south'
+            action, orientation = 'walking', 'south'
         elseif self.y > GAME_HEIGHT - self.height - MARGIN then
-            behaviour, direction = 'walking', 'north'
+            action, orientation = 'walking', 'north'
         else
-            behaviour = 'idle'
+            action = 'idle'
         end
 
-        local dx, dy = cardinaltoXY(direction)
+        local dx, dy = cardinaltoXY(orientation)
         self.x = self.x + dx * self.speed * dt
         self.y = self.y + dy * self.speed * dt
 
     -- idle till CD wears off / start attack animation
-    elseif behaviour == 'idle' then
+    elseif action == 'idle' then
         self.attackCD = math.max(0, self.attackCD - dt)
         if self.attackCD <= ATTACK_DELAY then
-            behaviour = 'attacking'
+            action = 'attacking'
         end
 
     -- shoot towards player / transition to idle after animation is done
-    elseif behaviour == 'attacking' then
+    elseif action == 'attacking' then
         self.attackCD = math.max(0, self.attackCD - dt)
         if self.attackCD <= 0 then
             local dx = (self.player.x + 8) - (self.x + 8)
@@ -112,11 +112,11 @@ local function attackPattern(self, dt)
             self.attackCD = self.attackRate
         end
         if self.model.animationComplete then
-            behaviour = 'idle'
+            action = 'idle'
         end
     end
 
-    return behaviour, direction
+    return action, orientation
 end
 
 return {

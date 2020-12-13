@@ -25,7 +25,7 @@ local stats = {
     modelWidth = 16,
     modelHeight = 24,
     hitPoints = 3,
-    invincibilityTime = 0.5,   -- invincibility time after getting hit [s]
+    invincibilityTime = 1,   -- invincibility time after getting hit [s]
 }
 
 local sprites = {
@@ -56,9 +56,9 @@ local behaviours = {
         frames = {43},
         updateRate = 1 / 6,
     },
-    dying = {
+    die = {
         frames = {57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70},
-        -- updateRate = 
+        -- updateRate =
     },
 }
 

@@ -22,9 +22,15 @@ function Enemy:update(dt)
     if self.hitCD > 0 then self.hitCD = math.max(0, self.hitCD - dt) end
 
     local behaviour, orientation = self:attackPattern(dt)
-    Entity.update(self)
     self.model:doo(behaviour)
     self.model:face(orientation)
+    Entity.update(self)
+
+    -- hit detection against player
+    if overlaps(self.boundingBox, self.player.boundingBox) then
+        self.player:hit(1)
+    end
+
     self.model:update(dt)
 end
 

@@ -46,7 +46,7 @@ function love.update(dt)
         -- placeholder
 
     elseif gGameState == 'gameover'  then
-        -- placeholder
+        player.model:update(dt)
     end
 end
 

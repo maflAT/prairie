@@ -17,7 +17,7 @@ function Player:reset(x, y)
     self.attackCD = 0
     -- invincibility time after getting hit
     self.iTime = self.defaultStats.invincibilityTime
-    self.hitCD = 0
+    self.hurtCD = 0
     self.model:doo('idle')
     self.model:face('south')
     Entity.update(self)
@@ -35,53 +35,53 @@ function Player:update(dt)
     self.y = coerce(self.y + vMov * ds, 0, GAME_HEIGHT - self.height)
     Entity.update(self)
 
-    -- hit detection against touching enemies
-    if self.hitCD > 0 then
-        self.hitCD = math.max(0, self.hitCD - dt)
-    else
-        for _, mob in pairs(gMobs) do
-            if overlaps(self.boundingBox, mob.boundingBox) then
-                self:hit(1)
-                break
-            end
-        end
-    end
+    -- update cooldowns / timeouts
+    self.hurtCD = math.max(0, self.hurtCD - dt)
+    self.attackCD = math.max(0, self.attackCD - dt)
 
     -- player state transitions
-    self.attackCD = self.attackCD - dt
     local finished = self.model.animationComplete
-    local animation = self.model.doing
+    local action = self.model.doing
     local orientation = self.model.facing
 
-    if finished then animation = 'idle' end
+    if finished then action = 'idle' end
 
-    if animation == 'harm' then
+    if action == 'harm' then
         -- stay in 'harm'
     elseif #aimDirection > 0 and self.attackCD <= 0 then
         self.attackCD = self.attackRate
         Projectile(self.x, self.y, hAim, vAim)
-        animation, orientation = 'attacking', aimDirection
-    elseif #movDirection > 0 and animation ~= 'attacking' then
-        animation, orientation = 'walking', movDirection
+        action, orientation = 'attacking', aimDirection
+    elseif action ~= 'attacking' then
+        if #movDirection > 0 then
+            action, orientation = 'walking', movDirection
+        else
+            action = 'idle'
+        end
     end
-    self.model:doo(animation)
+    self.model:doo(action)
     self.model:face(orientation)
     self.model:update(dt)
 end
 
 function Player:hit(damage)
-    if self.hitCD <= 0 then
-        self.hitCD = self.iTime
-        self.hp = self.hp - damage
-        if self.hp <= 0 then
-            gGameState = 'gameover'
-            self.model:doo('dying')
-        else
-            self.model:doo('harm')
-        end
+    if self.hurtCD > 0 then return end
+    self.hp = self.hp - damage
+    if self.hp > 0 then
+        self.hurtCD = self.iTime
+        self.model:doo('harm')
+    else
+        gGameState = 'gameover'
+        self.model:doOnce('die')
     end
 end
 
-function Player:draw() self.model:draw(self.x, self.y) end
+function Player:draw()
+    if self.hurtCD > 0 then
+        -- blink player by skipping some draw calls
+        if math.floor(love.timer.getTime()*10) % 2 == 0 then return end
+    end
+    self.model:draw(self.x, self.y)
+end
 
 return Player

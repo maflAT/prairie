@@ -5,7 +5,7 @@ local Animation = require 'Animation'
 local Model = Class{}
 
 function Model:init(model)
-    self.behaviours = model.behaviours
+    self.actions = model.behaviours
     self.orientations = model.orientations
 
     -- load sprite sheets and generate quads for all sprites listed in the player model
@@ -18,25 +18,25 @@ function Model:init(model)
     end
 
     -- complete attributes for each orientation
-    for _, attributes in pairs(self.orientations) do
+    for _, orientation in pairs(self.orientations) do
         -- fill in defaults for missing attributes
         for attribute, defaultValue in pairs(model.defaults.orientations) do
-            attributes[attribute] = attributes[attribute] or defaultValue
+            orientation[attribute] = orientation[attribute] or defaultValue
         end
         -- append imported sprite sheets and generated quads to attributes
-        attributes.spriteSheet = spriteSheets[attributes.sprites]
-        attributes.quads = quads[attributes.sprites]
+        orientation.spriteSheet = spriteSheets[orientation.sprites]
+        orientation.quads = quads[orientation.sprites]
     end
 
     -- complete attributes for each behaviour
     self.animations = {}
-    for behaviour, attributes in pairs(self.behaviours) do
+    for key, action in pairs(self.actions) do
         -- fill in defaults for missing attributes
         for attribute, defaultValue in pairs(model.defaults.behaviours) do
-            attributes[attribute] = attributes[attribute] or defaultValue
+            action[attribute] = action[attribute] or defaultValue
         end
         -- initialize animation sequence for each behaviour
-        self.animations[behaviour] = Animation(attributes.frames, attributes.updateRate)
+        self.animations[key] = Animation(action.frames, action.updateRate)
     end
 
     -- initialize to default state
@@ -44,19 +44,29 @@ function Model:init(model)
     self:face(model.defaults.orientation or 'south')
 end
 
-function Model:doo(behaviour)
-    -- if desired state is defined, set it and start its animation,
-    -- else keep current state
-    if behaviour ~= nil and behaviour ~= self.doing and self.behaviours[behaviour] then
-        self.doing = behaviour
-        self.behaviour = self.behaviours[behaviour]
-        self.animation = self.animations[behaviour]
-        self.animation:reset()
+function Model:doo(action, loop)
+    -- abort function / keep current state if action is not defined
+    if action == nil or self.actions[action] == nil then return nil end
+
+    -- if action differs from current, set it and start its animation,
+    if action ~= self.doing then
+        self.doing = action
+        self.action = self.actions[action]
+        self.animation = self.animations[action]
+        self.animation:reset(nil, loop)
+    else
+        -- otherwise, only update loop parameter
+        if loop ~= nil then self.animation.loop = loop end
     end
 end
 
+function Model:doOnce(action) return self:doo(action, false) end
+
 function Model:face(direction)
-    if direction ~= nil and direction ~= self.facing and self.orientations[direction] then
+    -- abort function / keep current orientation if direction is not defined
+    if direction == nil or self.orientations[direction] == nil then return nil end
+
+    if direction ~= self.facing then
         self.facing = direction
         self.orientation = self.orientations[direction]
         self.animation:reset()

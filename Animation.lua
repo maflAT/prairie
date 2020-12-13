@@ -5,26 +5,31 @@
 
 return Class {
     init = function(self, frames, frameTime)
+        self.loop = true
         self.frames = frames
         self.frameTime = frameTime
         self:reset()
     end,
 
     -- reset animation to startFrame or first frame if no startFrame is supplied
-    reset = function(self, startFrame)
+    reset = function(self, startFrame, loop)
+        if loop == false then self.loop = false else self.loop = true end
         self.timer = self.frameTime
-        self.currentFrame = startFrame and startFrame >= 1 or 1
+        self.currentFrame = (startFrame and startFrame >= 1) and startFrame or 1
     end,
 
-    -- update current frame based on delta time; 
-    -- return true if animation loop has been completed
     update = function(self, dt)
         self.timer = self.timer - dt
         if self.timer <= 0 then
             self.timer = self.timer + self.frameTime
-            self.currentFrame = self.currentFrame % #self.frames + 1
-            return self.currentFrame == 1 and true or false
+            if self.currentFrame < #self.frames then
+                self.currentFrame = self.currentFrame + 1
+            else
+                if self.loop then self.currentFrame = 1 end
+                return true
+            end
         end
+        return false
     end,
 
     draw = function(self)
