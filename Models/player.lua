@@ -52,6 +52,14 @@ local behaviours = {
         frames = {29, 30, 31, 32, 33, 34},
         updateRate = 1 / 30,
     },
+    harm = {
+        frames = {43},
+        updateRate = 1 / 6,
+    },
+    dying = {
+        frames = {57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70},
+        -- updateRate = 
+    },
 }
 
 local orientations = {

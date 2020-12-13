@@ -1,5 +1,5 @@
 --[[
-    TODO: hit and death animations, obstacles,
+    TODO: hit and death animations, sound effects, obstacles,
 ]]
 
 -- load global classes / modules; register locals
@@ -12,6 +12,7 @@ gGameState = 'init'
 local push, player, map, overlay = {}, {}, {}, {}
 
 
+-- setup and initialize game state, map, player, ...
 function love.load()
     math.randomseed(os.time())
 
@@ -28,39 +29,37 @@ function love.load()
 end
 
 
-local debug_Timelapse = 1
+-- advance game state
+local debug_TimeScale = 1
 function love.update(dt)
 
     if gGameState == 'menu' then
         player.model:update(dt)
 
     elseif gGameState == 'playing' then
-        dt = dt / (debug_Timelapse > 0 and debug_Timelapse or 1)
+        dt = dt * debug_TimeScale
         map:update(dt)
-
         -- remove dead entities from collections
         doAll(cleanUp, gEntities, gMobs, gBullets)
 
     elseif gGameState == 'pause'  then
+        -- placeholder
+
     elseif gGameState == 'gameover'  then
+        -- placeholder
     end
 end
 
 
+-- render current scene
 function love.draw()
     push:start()
 
     map:draw()
     drawAll(gEntities)
     overlay[gGameState](map)
-
-    -- if gGameState == 'menu' then
-    -- elseif gGameState == 'playing' then
-    -- elseif gGameState == 'pause'  then
-    -- elseif gGameState == 'gameover'  then
-    -- end
-
     overlay.debug:draw(map, player)
+
     push:finish()
 end
 
@@ -69,8 +68,8 @@ function love.keypressed(k)
     -- shared keybinds for all game states
     if k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
     elseif k == 'f1' then overlay.debug:toggle()
-    elseif k == 'f5' then debug_Timelapse = debug_Timelapse + 1
-    elseif k == 'f6' then debug_Timelapse = debug_Timelapse - 1
+    elseif k == 'f5' then debug_TimeScale = debug_TimeScale / 2
+    elseif k == 'f6' then debug_TimeScale = debug_TimeScale * 2
     end
 
     -- state specific keybinds

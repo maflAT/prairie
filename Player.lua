@@ -47,22 +47,25 @@ function Player:update(dt)
         end
     end
 
-    -- fire logic
+    -- player state transitions
     self.attackCD = self.attackCD - dt
-    local animationComplete = self.model.animationComplete
-    if self.attackCD <= 0 and #aimDirection > 0 then
-            self.attackCD = self.attackRate
-            Projectile(self.x, self.y, hAim, vAim)
-            self.model:doo('attacking')
-            self.model:face(aimDirection)
-    elseif self.model.doing ~= 'attacking' or animationComplete then
-        if #movDirection > 0 then
-            self.model:doo('walking')
-            self.model:face(movDirection)
-        else
-            self.model:doo('idle')
-        end
+    local finished = self.model.animationComplete
+    local animation = self.model.doing
+    local orientation = self.model.facing
+
+    if finished then animation = 'idle' end
+
+    if animation == 'harm' then
+        -- stay in 'harm'
+    elseif #aimDirection > 0 and self.attackCD <= 0 then
+        self.attackCD = self.attackRate
+        Projectile(self.x, self.y, hAim, vAim)
+        animation, orientation = 'attacking', aimDirection
+    elseif #movDirection > 0 and animation ~= 'attacking' then
+        animation, orientation = 'walking', movDirection
     end
+    self.model:doo(animation)
+    self.model:face(orientation)
     self.model:update(dt)
 end
 
@@ -72,6 +75,9 @@ function Player:hit(damage)
         self.hp = self.hp - damage
         if self.hp <= 0 then
             gGameState = 'gameover'
+            self.model:doo('dying')
+        else
+            self.model:doo('harm')
         end
     end
 end
