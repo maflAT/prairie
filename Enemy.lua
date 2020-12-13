@@ -15,11 +15,20 @@ function Enemy:init(model, x, y)
 
     -- invincibility time after getting hit
     self.iTime = model.stats.invincibilityTime
-    self.hitCD = 0
+    self.hurtCD = 0
+    self.dying = false
+    self.attackSound = model.sounds.attack:clone()
+    self.hitSound = model.sounds.hit:clone()
 end
 
 function Enemy:update(dt)
-    if self.hitCD > 0 then self.hitCD = math.max(0, self.hitCD - dt) end
+    if self.dying then
+        local done = self.model:update(dt)
+        if done then self:kill() end
+        return
+    end
+
+    if self.hurtCD > 0 then self.hurtCD = math.max(0, self.hurtCD - dt) end
 
     local behaviour, orientation = self:attackPattern(dt)
     self.model:doo(behaviour)
@@ -35,13 +44,25 @@ function Enemy:update(dt)
 end
 
 function Enemy:hit(damage)
-    if self.hitCD <= 0 then
-        self.hp = self.hp - damage
-        self.hitCD = self.iTime
+    if self.hurtCD > 0 then return end
+    self.hp = self.hp - damage
+    self.hitSound:stop()
+    self.hitSound:play()
+    if self.hp > 0 then
+        self.hurtCD = self.iTime
+        self.model:doo('harm')
+    else
+        self.dying = true
+        self.model:doOnce('die')
     end
-    if self.hp <= 0 then self:kill() end
 end
 
-function Enemy:draw() self.model:draw(self.x, self.y) end
+function Enemy:draw()
+    if self.hurtCD > 0 or self.dying then
+        -- blink player by skipping some draw calls
+        if math.floor(love.timer.getTime()*10) % 2 == 0 then return end
+    end
+    self.model:draw(self.x, self.y)
+end
 
 return Enemy

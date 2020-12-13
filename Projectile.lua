@@ -27,10 +27,12 @@ function Projectile:update(dt)
 
     -- hit detection against Enemies
     for _, target in pairs(self.targets) do
-        if overlaps(self.boundingBox, target.boundingBox) then
-            target:hit(BULLET_DAMAGE)
-            self:kill()
-            break
+        if target.hurtCD <= 0 and not target.dying then 
+            if overlaps(self.boundingBox, target.boundingBox) then
+                target:hit(BULLET_DAMAGE)
+                self:kill()
+                break
+            end
         end
     end
 end

@@ -4,7 +4,7 @@ local Enemy = require 'Enemy'
 
 Map.STAGE_TIME = 10
 Map.SPAWN_TIME = 3
-Map.MAX_IDLE_TIME = 0.5
+Map.MAX_IDLE_TIME = 0.2
 Map.mobTypes = {
     Cactus = require '/models/cactus',
     Coffin = require '/models/coffin',

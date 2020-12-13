@@ -25,7 +25,7 @@ local stats = {
     modelWidth = 24,
     modelHeight = 32,
     hitPoints = 2,
-    invincibilityTime = 0.2,   -- invincibility time after getting hit [s]
+    invincibilityTime = 0.5,   -- invincibility time after getting hit [s]
 }
 
 local sprites = {
@@ -44,8 +44,16 @@ local behaviours = {
         updateRate = 1 / 10,
     },
     attacking = {
-        frames = {49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71},
+        frames = {49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72},
         updateRate = 1 / 30,
+    },
+    harm = {
+        frames = {73},
+        updateRate = 1 / 6,
+    },
+    die = {
+        frames = {73},
+        updateRate = 1 / 2,
     },
 }
 
@@ -65,6 +73,13 @@ local orientations = {
         xOffset = 36,
     },
 }
+
+local sounds = {
+    attack = love.audio.newSource('assets/sfx/gun2.ogg', 'static'),
+    hit = love.audio.newSource('assets/sfx/hit.wav', 'static'),
+}
+sounds.attack:setVolume(0.2)
+sounds.hit:setVolume(0.5)
 
 local function attackPattern(self, dt)
     local ds = self.speed * dt
@@ -87,7 +102,7 @@ local function attackPattern(self, dt)
     local dy = self.player.y - self.y
 
     -- play attack animation if within certain range
-    local behaviour = dx^2 + dy^2 < 5000 and 'attacking' or 'walking'
+    local behaviour = dx^2 + dy^2 < 2000 and 'attacking' or 'walking'
 
     -- move towards player
     local turnthreshold = math.min(self.width / 2, self.height / 2)
@@ -122,4 +137,5 @@ return {
     behaviours = behaviours,
     orientations = orientations,
     attackPattern = attackPattern,
+    sounds = sounds,
 }

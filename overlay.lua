@@ -44,7 +44,8 @@ overlay['menu'] = function ()
     printf('shoot', cx, cy + 50, cx, 'center')
 
     font(smallFont)
-    printf("ESC: quit\t\tP: pause\t\tF11: fullscreen\t\tF1: debug info", 0, wh - 10, ww, 'center')
+    printf("ESC: quit\t\tP: pause\t\tM: mute\t\tF11: fullscreen\t\tF1: debug info",
+        0, wh - 10, ww, 'center')
 end
 
 -- gameplay info overlay
@@ -81,7 +82,8 @@ overlay['pause'] = function ()
 
     color(1, 1, 1, 0.7)
     font(smallFont)
-    printf("ESC: main menu\t\tP: resume\t\tF11: fullscreen\t\tF1: debug info", 0, wh - 10, ww, 'center')
+    printf("ESC: main menu\t\tP: resume\t\tM: mute\t\tF11: fullscreen\t\tF1: debug info",
+        0, wh - 10, ww, 'center')
 end
 
 -- game over screen

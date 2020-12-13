@@ -95,10 +95,24 @@ local orientations = {
     },
 }
 
+local sounds = {
+    attack = love.audio.newSource('assets/sfx/gun.ogg', 'static'),
+    hit = love.audio.newSource('assets/sfx/hit2.wav', 'static'),
+    death = love.audio.newSource('assets/sfx/death.wav', 'static'),
+    -- walk = love.audio.newSource('assets/sfx/walk.wav', 'static'),
+
+}
+sounds.attack:setVolume(0.1)
+sounds.hit:setVolume(0.5)
+sounds.death:setVolume(1)
+-- sounds.walk:setVolume(1)
+-- sounds.walk:setLooping(true)
+
 return {
     defaults = defaults,
     stats = stats,
     sprites = sprites,
     behaviours = behaviours,
     orientations= orientations,
+    sounds = sounds
 }

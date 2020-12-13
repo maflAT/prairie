@@ -5,6 +5,10 @@ function Player:init(model)
     Entity.init(self, 0, 0, model.stats.modelWidth, model.stats.modelHeight)
     self.model = AnimationModel(model)
     self.defaultStats = model.stats
+    self.attackSound = model.sounds.attack
+    self.hitSound = model.sounds.hit
+    self.deathSound = model.sounds.death
+    -- self.walkSound = model.sounds.walk
     self:reset()
 end
 
@@ -50,13 +54,17 @@ function Player:update(dt)
         -- stay in 'harm'
     elseif #aimDirection > 0 and self.attackCD <= 0 then
         self.attackCD = self.attackRate
+        self.attackSound:stop()
+        self.attackSound:play()
         Projectile(self.x, self.y, hAim, vAim)
         action, orientation = 'attacking', aimDirection
     elseif action ~= 'attacking' then
         if #movDirection > 0 then
             action, orientation = 'walking', movDirection
+            -- self.walkSound:play()
         else
             action = 'idle'
+            -- self.walkSound:stop()
         end
     end
     self.model:doo(action)
@@ -69,9 +77,12 @@ function Player:hit(damage)
     self.hp = self.hp - damage
     if self.hp > 0 then
         self.hurtCD = self.iTime
+        self.hitSound:stop()
+        self.hitSound:play()
         self.model:doo('harm')
     else
         gGameState = 'gameover'
+        self.deathSound:play()
         self.model:doOnce('die')
     end
 end

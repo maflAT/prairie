@@ -29,10 +29,7 @@ local stats = {
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Front Sheet.png",
-        --    tileWidth = 48,
-        --    tileHeight = 44
-        },
+    [1] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Front Sheet.png"},
     [2] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Back Sheet.png"},
     [3] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Side Sheet.png"},
 }
@@ -49,6 +46,10 @@ local behaviours = {
     attacking = {
         frames = {37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54},
         updateRate = 1 / 30,
+    },
+    die = {
+        frames = {55},
+        updateRate = 1 / 2,
     },
 }
 
@@ -68,6 +69,13 @@ local orientations = {
         xOffset = 37,
     },
 }
+
+local sounds = {
+    attack = love.audio.newSource('assets/sfx/gun2.ogg', 'static'),
+    hit = love.audio.newSource('assets/sfx/hit.wav', 'static'),
+}
+sounds.attack:setVolume(0.2)
+sounds.hit:setVolume(0.5)
 
 local function attackPattern(self, dt)
     -- move towards player
@@ -93,7 +101,7 @@ local function attackPattern(self, dt)
     end
 
     -- play attack animation if within certain range
-    if hyp < 5000 then behaviour = 'attacking' else behaviour = 'walking' end
+    if hyp < 2000 then behaviour = 'attacking' else behaviour = 'walking' end
 
     return behaviour, orientation
 end
@@ -105,4 +113,5 @@ return {
     behaviours = behaviours,
     orientations= orientations,
     attackPattern = attackPattern,
+    sounds = sounds
 }

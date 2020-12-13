@@ -4,6 +4,9 @@
 
 -- load global classes / modules; register locals
 require 'utils'
+music = love.audio.newSource('assets/music/Welcome To The Wild West.ogg', 'static')
+music:setVolume(0.5)
+music:setLooping(true)
 Class = require 'assets/hump/class'
 Entity = require 'Entity'
 Projectile = require 'Projectile'
@@ -26,6 +29,7 @@ function love.load()
     map = require 'map' (player)
     overlay = require 'overlay'
     gGameState = 'menu'
+    music:play()
 end
 
 
@@ -66,7 +70,9 @@ end
 
 function love.keypressed(k)
     -- shared keybinds for all game states
-    if k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
+    if k == 'm' then
+        love.audio.setVolume(love.audio.getVolume() == 0 and 1 or 0)
+    elseif k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
     elseif k == 'f1' then overlay.debug:toggle()
     elseif k == 'f5' then debug_TimeScale = debug_TimeScale / 2
     elseif k == 'f6' then debug_TimeScale = debug_TimeScale * 2

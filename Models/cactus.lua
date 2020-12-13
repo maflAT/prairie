@@ -21,12 +21,12 @@ local defaults = {
 }
 
 local stats = {
-    attackRate = 1,     -- in seconds
+    attackRate = 1.2,     -- in seconds
     moveSpeed = 80,         -- in pixel / sec
     modelWidth = 16,
     modelHeight = 30,
     hitPoints = 1,
-    invincibilityTime = 0.5,   -- invincibility time after getting hit [s]
+    invincibilityTime = 0,   -- invincibility time after getting hit [s]
 }
 
 local sprites = {
@@ -48,6 +48,10 @@ local behaviours = {
         frames = {23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33},
         updateRate = 1 / 30,
     },
+    die = {
+        frames = {34},
+        updateRate = 1 / 2,
+    },
 }
 
 local orientations = {
@@ -66,6 +70,13 @@ local orientations = {
         xOffset = 28,
     },
 }
+
+local sounds = {
+    attack = love.audio.newSource('assets/sfx/gun2.ogg', 'static'),
+    hit = love.audio.newSource('assets/sfx/hit.wav', 'static'),
+}
+sounds.attack:setVolume(0.2)
+sounds.hit:setVolume(0.5)
 
 local MARGIN = 10
 local ATTACK_DELAY = 0.2
@@ -110,6 +121,8 @@ local function attackPattern(self, dt)
             vy = vy * (dy < 0 and -1 or 1)
             Projectile(self.x + 8, self.y + 20, vx, vy, true, {self.player})
             self.attackCD = self.attackRate
+            self.attackSound:stop()
+            self.attackSound:play()
         end
         if self.model.animationComplete then
             action = 'idle'
@@ -126,4 +139,5 @@ return {
     behaviours = behaviours,
     orientations= orientations,
     attackPattern = attackPattern,
+    sounds = sounds
 }
