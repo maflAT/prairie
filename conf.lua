@@ -4,10 +4,10 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 -- define global constants here to keep 'main.lua' cleaner
-GAME_WIDTH = 384
-GAME_HEIGHT = 240
-WINDOW_WIDTH = 1152
-WINDOW_HEIGHT = 720
+GAME_WIDTH = 480
+GAME_HEIGHT = 270
+WINDOW_WIDTH = 960
+WINDOW_HEIGHT = 540
 
 function love.conf(t)
     -- disable unused modules
@@ -18,7 +18,7 @@ function love.conf(t)
     t.modules.video = false
 
     -- initial window setup
-    t.window.display = 2
+    -- t.window.display = 2
     t.window.fullscreen = false
     t.window.fullscreentype = 'desktop'
     t.window.borderless = false
