@@ -30,9 +30,9 @@ local stats = {
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Front Sheet.png"},
-    [2] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Back Sheet.png"},
-    [3] = {file = "/assets/Graphics/Mobs/Cactus/Cactus Side Sheet.png"},
+    [1] = {file = "/assets/graphics/Mobs/Cactus/Cactus Front Sheet.png"},
+    [2] = {file = "/assets/graphics/Mobs/Cactus/Cactus Back Sheet.png"},
+    [3] = {file = "/assets/graphics/Mobs/Cactus/Cactus Side Sheet.png"},
 }
 
 local behaviours = {

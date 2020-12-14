@@ -13,7 +13,7 @@ local cy = wh / 2
 -- load font assests
 local keyCapFont = newFont('/assets/fonts/KeymodeAlphabet.ttf', 12, 'none')
 local keyCapSymbols = newFont('/assets/fonts/KeymodeKatakana.ttf', 12, 'none')
-local smallFont = newFont('/assets/fonts/goodbyeDespair.ttf', 8, 'none')
+local smallFont = newFont('/assets/fonts/goodbyeDespair.ttf', 8, 'mono')
 local titleFont = newFont('/assets/fonts/old_pixel-7.ttf', 20, 'normal')
 
 local overlay = {}

@@ -29,9 +29,9 @@ local stats = {
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Front Sheet.png"},
-    [2] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Back Sheet.png"},
-    [3] = {file = "/assets/Graphics/Mobs/Coffin/Coffin Side Sheet.png"},
+    [1] = {file = "/assets/graphics/Mobs/Coffin/Coffin Front Sheet.png"},
+    [2] = {file = "/assets/graphics/Mobs/Coffin/Coffin Back Sheet.png"},
+    [3] = {file = "/assets/graphics/Mobs/Coffin/Coffin Side Sheet.png"},
 }
 
 local behaviours = {

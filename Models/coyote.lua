@@ -29,9 +29,9 @@ local stats = {
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Mobs/Coyote/Coyote Front Sheet.png"},
-    [2] = {file = "/assets/Graphics/Mobs/Coyote/Coyote Back Sheet.png"},
-    [3] = {file = "/assets/Graphics/Mobs/Coyote/Coyote Side Sheet.png"},
+    [1] = {file = "/assets/graphics/Mobs/Coyote/Coyote Front Sheet.png"},
+    [2] = {file = "/assets/graphics/Mobs/Coyote/Coyote Back Sheet.png"},
+    [3] = {file = "/assets/graphics/Mobs/Coyote/Coyote Side Sheet.png"},
 }
 
 local behaviours = {

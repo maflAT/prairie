@@ -25,8 +25,8 @@ function love.load()
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
         {resizable = true, pixelperfect = false, fullscreen = false,})
 
-    player = require 'Player' (require '/models/player')
-    map = require 'map' (player)
+    player = require 'Player' (require '/Models/player')
+    map = require 'Map' (player)
     overlay = require 'overlay'
     gGameState = 'menu'
     music:play()

@@ -29,14 +29,11 @@ local stats = {
 }
 
 local sprites = {
-    [1] = {file = "/assets/Graphics/Player/Player Front Sheet.png",
-        --    tileWidth = 48,
-        --    tileHeight = 44
-        },
-    [2] = {file = "/assets/Graphics/Player/Player Back Sheet.png"},
-    [3] = {file = "/assets/Graphics/Player/Player Side Sheet.png"},
-    [4] = {file = "/assets/Graphics/Player/Player Angle 1 Sheet.png"},
-    [5] = {file = "/assets/Graphics/Player/Player Angle 2 Sheet.png"},
+    [1] = {file = "/assets/graphics/Player/Player Front Sheet.png"},
+    [2] = {file = "/assets/graphics/Player/Player Back Sheet.png"},
+    [3] = {file = "/assets/graphics/Player/Player Side Sheet.png"},
+    [4] = {file = "/assets/graphics/Player/Player Angle 1 Sheet.png"},
+    [5] = {file = "/assets/graphics/Player/Player Angle 2 Sheet.png"},
 }
 
 local behaviours = {
