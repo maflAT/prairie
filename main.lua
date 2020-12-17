@@ -51,6 +51,9 @@ function love.update(dt)
 
     elseif gGameState == 'gameover'  then
         player.model:update(dt)
+
+    elseif gGameState == 'credits'  then
+        -- placeholder
     end
 end
 
@@ -74,8 +77,6 @@ function love.keypressed(k)
         love.audio.setVolume(love.audio.getVolume() == 0 and 1 or 0)
     elseif k == 'f11' then push:switchFullscreen(WINDOW_WIDTH, WINDOW_HEIGHT)
     elseif k == 'f1' then overlay.debug:toggle()
-    elseif k == 'f5' then debug_TimeScale = debug_TimeScale / 2
-    elseif k == 'f6' then debug_TimeScale = debug_TimeScale * 2
     end
 
     -- state specific keybinds
@@ -85,11 +86,16 @@ function love.keypressed(k)
         elseif k == 'return' then
             gGameState = 'playing'
             map:reset()
+        elseif k == 'c' then
+            gGameState = 'credits'
         end
     elseif gGameState == 'playing' then
         if k == 'escape' or k == 'p' then
             gGameState = 'pause'
+        elseif k == 'f5' then debug_TimeScale = debug_TimeScale / 2
+        elseif k == 'f6' then debug_TimeScale = debug_TimeScale * 2
         end
+
     elseif gGameState == 'pause'  then
         if k == 'escape' then
             gGameState = 'menu'
@@ -101,6 +107,10 @@ function love.keypressed(k)
         if k == 'escape' then
             gGameState = 'menu'
             map:reset()
+        end
+    elseif gGameState == 'credits' then
+        if k == 'escape' or k == 'c' then
+            gGameState = 'menu'
         end
     end
 end
