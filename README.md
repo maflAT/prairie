@@ -34,10 +34,10 @@ Depending on how it goes, I might also include some additional features:
 - Scrollable maps
 
 ### Credits:
-Helper Utilities for Massive Progression: Matthias Richter
-push Library: Ulysse Ramage
-Graphics and Music: Esutdio Vaca Roxa
-Fonts: Sizenko Alexander, Kato Masashi
+Helper Utilities for Massive Progression: Matthias Richter  
+push Library: Ulysse Ramage  
+Graphics and Music: Esutdio Vaca Roxa  
+Fonts: Sizenko Alexander, Kato Masashi  
 
 ### Youtube link:
 [Revenge of the Prairie King](https://youtu.be/xqEv-sMTNfA)
